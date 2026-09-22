@@ -3392,6 +3392,14 @@ function openStaniceniPanel(realKm) {
       pages.push({soubor:d.soubor, nazev:d.nazev, typ:d.typ});
     });
   });
+  // Koordinační/katastrální situace TÉTO stavby nemají v názvu číslo SO (C.3_Koor_sit…),
+  // takže je index podle SO nezachytí → přidej je přímo podle km (dedup ať se nezdvojí).
+  var _haveSoubor = {}; pages.forEach(function(p){ _haveSoubor[p.soubor] = 1; });
+  (typeof DOCS_SITUACE!=='undefined' ? findDocsForKm(DOCS_SITUACE, realKm) : []).forEach(function(d){
+    if(!d || !d.soubor || _haveSoubor[d.soubor]) return;
+    pages.push({soubor:d.soubor, nazev:d.nazev, typ:'📐 Situace'});
+    _haveSoubor[d.soubor] = 1;
+  });
   // Očísluj opakující se štítky (víc situací / řezů), ať jdou záložky rozlišit
   var totals = {};
   pages.forEach(function(p){ totals[p.typ] = (totals[p.typ]||0) + 1; });
