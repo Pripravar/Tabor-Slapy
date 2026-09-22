@@ -1232,7 +1232,14 @@ document.addEventListener('touchend', function(e){
     <div id="auth-view-email" style="display:none;">
       <p style="text-align:left;font-weight:700;" id="email-title">Přihlášení e‑mailem</p>
       <div class="auth-note" id="email-help" style="text-align:left;">
-        <b>Poprvé tady?</b> Klepni na <b>„Nemám účet – vytvořit"</b>, zadej svůj e‑mail a zvol si heslo (napíšeš ho 2× kvůli překlepu). Příště se stejným e‑mailem a heslem přihlásíš.
+        <b>Poprvé tady?</b> Klepni dole na <b>„Nemám účet – vytvořit"</b>. Příště se stejným e‑mailem a heslem přihlásíš.
+      </div>
+      <div class="auth-note auth-note-warn" id="email-help-reg" style="text-align:left;display:none;">
+        <b>Vytvoření účtu — 3 kroky:</b><br>
+        1) napiš svůj <b>e‑mail</b><br>
+        2) vymysli si <b>nové heslo</b> (min. 6 znaků) a napiš ho <b>2×</b><br>
+        3) klepni <b>„Vytvořit účet"</b><br>
+        ⚠️ Heslo si <b>volíš sám</b> — <b>není</b> to heslo do Tvé e‑mailové schránky.
       </div>
       <input type="email" id="email-input" class="auth-input" placeholder="tvůj@email.cz" autocomplete="email" inputmode="email" autocapitalize="off">
       <input type="password" id="email-pass" class="auth-input" placeholder="Heslo (min. 6 znaků)" autocomplete="current-password">
@@ -12330,6 +12337,7 @@ function _emailApplyMode(){
   if(tog) tog.textContent = reg ? '← Už mám účet (přihlásit)' : 'Nemám účet – vytvořit';
   if(forgot) forgot.style.display = reg ? 'none' : '';
   if(help) help.style.display = reg ? 'none' : '';
+  var helpReg=document.getElementById('email-help-reg'); if(helpReg) helpReg.style.display = reg ? '' : 'none';
   if(pass) pass.setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
 }
 function _emailToggleMode(){ window._emailReg=!window._emailReg; _emailApplyMode(); showAuthError(''); }
