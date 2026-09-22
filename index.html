@@ -1527,12 +1527,14 @@ document.addEventListener('touchend', function(e){
     </div>
     <div style="font-size:11px;color:var(--text2);opacity:.75;margin-top:5px;">Zapni datum → na trase přibudou fialové body. Klik na bod = 360° snímek; šipkami (i přímo v obraze) jdeš dál.</div>
   </div>
-  <div data-perm="sondy">
+  <!-- Sondy (diagnostika) – Slapy-Tábor zatím nemá data; skryto (dřív pozůstatek jiné akce ESLAB P36-2019).
+       Až budou vlastní sondy, naplň DIAG_SONDY_2019 a odeber style="display:none". -->
+  <div data-perm="sondy" style="display:none;">
   <div class="layer-row">
-    <label>🕳️ Sondy (diagnostika 2019)</label>
+    <label>🕳️ Sondy (diagnostika)</label>
     <label class="toggle"><input type="checkbox" id="lyr-sondy" onchange="toggleLayer('sondy',this.checked)"><span class="toggle-slider"></span></label>
   </div>
-  <div style="font-size:11px;color:var(--text2);opacity:.75;">19 sond z diagnostiky vozovky (ESLAB P36-2019). Klik = staničení této stavby + skladba vrstev.</div>
+  <div style="font-size:11px;color:var(--text2);opacity:.75;">Sondy z diagnostiky vozovky. Klik = staničení této stavby + skladba vrstev.</div>
   </div>
   <!-- data-perm-managed=1 → sekci odkrývá až kontrola, že overlay JSON existuje (viz níž) -->
   <div id="situace-section" style="display:none;padding:4px 0 2px;" data-perm="situace" data-perm-managed="1">
@@ -1625,7 +1627,7 @@ document.addEventListener('touchend', function(e){
   </div><!-- /ukoly -->
   <div data-perm="objekty">
   <div class="layer-row">
-    <label>🔵 Propustky (SO 104, SO 105)</label>
+    <label>🔵 Mosty / lávka / nadjezd (SO 201, 202, 221, 222, 651)</label>
     <label class="toggle"><input type="checkbox" id="lyr-prop" checked onchange="toggleLayer('propustky',this.checked)"><span class="toggle-slider"></span></label>
   </div>
   <div class="layer-row">
@@ -3777,7 +3779,14 @@ function centerGPS() {
 
 function resetMapView() {
   if(!map) return;
-  map.setView([49.917, 14.580], 14);
+  // „Domů" = zpět na celou trasu této stavby (dřív pevné souřadnice Sulic – chyba)
+  try {
+    if(typeof GPX_POINTS!=='undefined' && GPX_POINTS && GPX_POINTS.length){
+      map.fitBounds(L.latLngBounds(GPX_POINTS.map(function(p){return[p[0],p[1]];})),{padding:[40,40]});
+      return;
+    }
+  } catch(e){}
+  map.setView([49.3955, 14.659], 14); // fallback: střed Slapy–Tábor
 }
 function toggleLayers(){
   var open = document.getElementById('layers-panel').classList.toggle('open');
@@ -9196,23 +9205,9 @@ var gallerySort = 'date';     // 'date' = datum pořízení (nejnovější prvn�
 // Liniové objekty mají rozsah km (kmOd–kmDo, odvozeno z výkresů situací/profilů),
 // bodové doplňkové objekty (DOPLNKY_SO) mají jedno km. Při focení se podle staničení
 // najdou objekty v okolí ±50 m a uživatel vybere přesný SO.
-var SO_OBJEKTY = (function(){
-  var list = [
-    {id:'SO 101', short:'silnice',              kmOd:0.000, kmDo:4.605},
-    {id:'SO 102', short:'extravilán',           kmOd:0.700, kmDo:1.600},
-    {id:'SO 103', short:'okružní křižovatka',   kmOd:1.040, kmDo:1.340},
-    {id:'SO 104', short:'propustek 1',          kmOd:2.350, kmDo:2.460},
-    {id:'SO 105', short:'propustek 2',          kmOd:3.030, kmDo:3.100},
-    {id:'SO 106', short:'Nová Hospoda',         kmOd:3.360, kmDo:3.560},
-    {id:'SO 107', short:'zpomalovací ostrůvek', kmOd:4.340, kmDo:4.605}
-  ];
-  (typeof DOPLNKY_SO !== 'undefined' ? DOPLNKY_SO : []).forEach(function(d){
-    if(!d || typeof d.km !== 'number') return;
-    var short = String(d.nazev || d.id).replace(d.id + ' - ', '').replace(/\s*\(km[^)]*\)\s*$/i, '').trim();
-    list.push({ id:d.id, short:short, kmOd:d.km, kmDo:d.km });
-  });
-  return list;
-})();
+// Naplní se automaticky z SO_CATALOG + PROPUSTKY + DOPLNKY_SO (viz _buildSoObjekty() za SO_CATALOG).
+// (Dřív tu byl natvrdo katalog Sulic SO 101–107 – pozůstatek, odstraněn.)
+var SO_OBJEKTY = [];
 
 // KOMPLETNÍ katalog SO objektů z PD (legenda situace) – pro tlačítko „Další SO ze seznamu".
 // Nemají km → nenabízí se automaticky podle polohy, ale jdou vybrat ručně z celého seznamu.
@@ -9258,6 +9253,40 @@ var SO_CATALOG = [
   {id:'SO 801', short:'technická rekultivace'},
   {id:'SO 811', short:'vegetační úpravy'},
 ];
+// Sestaví SO_OBJEKTY (proximity katalog pro focení) z Tábor dat – žádný ruční seznam.
+// km se čte z textu 'short' (např. „km 3,720" nebo rozsah „km 1,710–2,051"); hlavní
+// komunikace SO 101 dostane celou trasu; bodové objekty (PROPUSTKY) dostanou svoje km.
+(function _buildSoObjekty(){
+  function parseKm(s){
+    s = String(s||'').replace(/,/g,'.');
+    var r = s.match(/km\s*([\d.]+)\s*[–\-]\s*([\d.]+)/i);
+    if(r) return { kmOd:parseFloat(r[1]), kmDo:parseFloat(r[2]) };
+    var m = s.match(/km\s*([\d.]+)/i);
+    if(m){ var v=parseFloat(m[1]); return { kmOd:v, kmDo:v }; }
+    return null;
+  }
+  var endKm = (typeof KM_END==='number' ? KM_END : 3.7);
+  var out = [];
+  (typeof SO_CATALOG!=='undefined'?SO_CATALOG:[]).forEach(function(o){
+    if(!o || !o.id) return;
+    var km = parseKm(o.short);
+    if(o.id === 'SO 101'){ out.push({ id:o.id, short:(o.short||'komunikace'), kmOd:0.000, kmDo:endKm }); return; }
+    if(km) out.push({ id:o.id, short:(o.short||''), kmOd:km.kmOd, kmDo:km.kmDo });
+    // SO bez km v textu se nenabízí podle polohy, ale jsou ručně v celém SO_CATALOG.
+  });
+  (typeof PROPUSTKY!=='undefined'?PROPUSTKY:[]).forEach(function(p){
+    if(!p || !p.id || typeof p.km!=='number') return;
+    if(out.some(function(x){ return x.id===p.id; })) return;
+    out.push({ id:p.id, short:(p.nazev||'').replace(/\s*\(km[^)]*\)\s*$/i,'').trim(), kmOd:p.km, kmDo:p.km });
+  });
+  (typeof DOPLNKY_SO!=='undefined'?DOPLNKY_SO:[]).forEach(function(d){
+    if(!d || typeof d.km!=='number') return;
+    var short = String(d.nazev||d.id).replace(d.id+' - ','').replace(/\s*\(km[^)]*\)\s*$/i,'').trim();
+    out.push({ id:d.id, short:short, kmOd:d.km, kmDo:d.km });
+  });
+  SO_OBJEKTY = out;
+})();
+
 // Vlastní (mimo PD) objekty – sdílené v týmu přes /so_custom (deponie, zařízení staveniště…)
 var customSO = [];
 function loadCustomSO(){
@@ -19400,10 +19429,10 @@ function copyDiaryExport(){
         </div>
       </details>
 
-      <details style="border-bottom:1px solid var(--border);padding:7px 0;"><summary style="cursor:pointer;font-weight:700;">🕳️ Sondy (diagnostika vozovky)</summary>
+      <!-- Sondy (diagnostika) – Slapy-Tábor zatím nemá data; nápověda skryta (dřív pozůstatek jiné akce). -->
+      <details style="border-bottom:1px solid var(--border);padding:7px 0;display:none;"><summary style="cursor:pointer;font-weight:700;">🕳️ Sondy (diagnostika vozovky)</summary>
         <div style="padding:6px 0 2px;color:var(--text2);">
-          19 sond z diagnostiky vozovky (ESLAB, zpráva P36-2019, 2019). Zapni ve <b>☰ Vrstvy → 🕳️ Sondy</b> — na trase se objeví očíslované body.<br>
-          Klik na sondu ukáže <b>staničení této stavby</b> (km), <b>skladbu vrstev v mm</b> (shora dolů, nahoře asfalt) a tlačítko <b>📄 Otevřít zprávu P36-2019</b> (celá diagnostika). Pozn.: „km" ve zprávě je <b>průběžné staničení celé silnice II/603</b> (posun ≈ 8,24 km) — appka dopočítává reálné staničení z GPS sondy. Oranžové body = poloha odhadnutá (sonda bez GPS ve zprávě).
+          Sondy z diagnostiky vozovky. Zapni ve <b>☰ Vrstvy → 🕳️ Sondy</b> — na trase se objeví očíslované body s km a skladbou vrstev.
         </div>
       </details>
 
