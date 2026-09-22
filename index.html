@@ -1511,10 +1511,7 @@ document.addEventListener('touchend', function(e){
       <label>📐 Staničení 20m</label>
       <label class="toggle"><input type="checkbox" id="lyr-st20sub" onchange="toggleSubLayer('st20sub',this.checked)"><span class="toggle-slider"></span></label>
     </div>
-    <div class="layer-row">
-      <label>🏗️ Objekty SO (101.1, 103…)</label>
-      <label class="toggle"><input type="checkbox" id="lyr-soSub" checked onchange="toggleSubLayer('soSub',this.checked)"><span class="toggle-slider"></span></label>
-    </div>
+
   </div>
   <div style="padding:4px 0 2px;" data-perm="dron">
     <div style="font-size:12px;color:var(--text2);margin-bottom:5px;">🛰️ Dron snímky (klikni datum = zobraz)</div>
@@ -1631,8 +1628,6 @@ document.addEventListener('touchend', function(e){
     <label>🏗️ Liniové SO (úseky podél trasy)</label>
     <label class="toggle"><input type="checkbox" id="lyr-so" checked onchange="toggleLayer('so',this.checked)"><span class="toggle-slider"></span></label>
   </div>
-  <div style="font-size:11px;color:var(--text2);margin:5px 0 3px;">📋 Ostatní / celotrasové SO (dokumentace – klik = výkresy)</div>
-  <div id="ostatni-so-list" style="display:flex;flex-wrap:wrap;gap:5px;padding-bottom:4px;"></div>
   </div><!-- /objekty -->
   <div data-perm="gps">
   <div class="layer-row">
@@ -3039,7 +3034,9 @@ function buildStaniceni20Sub() {
 }
 // Read-only barevné označení SO objektů podél osy (101.1, 103…) pro subku – bez kliku, bez výkresů.
 function buildSOSub() {
+  // Liniové SO kreslí jen buildSO() (jinak dvojité čáry). Tato vrstva zůstává prázdná.
   layerGroups.soSub=L.layerGroup();
+  return;
   var soOffset=20;
   STAVEBNI_OBJEKTY.forEach(function(so){
     var pts=[], bearList=[], km=so.kmOd;
@@ -4204,7 +4201,6 @@ function init() {
   if(ETAPY.length) buildEtapy();
   if(CISTENI_PRIKOPY.vpravo.length || CISTENI_PRIKOPY.vlevo.length) buildPrikopy();
   buildBodoveSO();
-  renderOstatniSO();
   buildDoplnky();
   buildVedeniNN();
   map.fitBounds(L.latLngBounds(GPX_POINTS.map(function(p){return[p[0],p[1]];})),{padding:[40,40]});
@@ -8707,10 +8703,7 @@ var STAVEBNI_OBJEKTY = [
      {typ:'📄 Výkres', nazev:'352 05 Vzor kanal sachta', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_05_Vzor_kanal_sachta.pdf'},
      {typ:'📄 Výkres', nazev:'352 06 Vykaz vymer', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_06_Vykaz_vymer.pdf'}
    ]},
-];
-
-var OSTATNI_SO = [
-  {id:'SO 001', nazev:'Příprava území',
+  {id:'SO 001', kmOd:0.000, kmDo:3.700, barva:'#2980b9', cela:true, nazev:'Příprava území (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Rozpiska', nazev:'001 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.1_Příprava_území/001_00_desky_rozpiska.pdf'},
      {typ:'📑 Seznam příloh', nazev:'001 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.1_Příprava_území/001_00_seznam priloh.pdf'},
@@ -8722,7 +8715,7 @@ var OSTATNI_SO = [
      {typ:'📐 Situace', nazev:'001 02 3 situace 3 cast', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.1_Příprava_území/001_02_3_situace 3_cast.pdf'},
      {typ:'📄 Výkres', nazev:'001 03 Navrh kaceni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.1_Příprava_území/001_03_Navrh kaceni.pdf'}
    ]},
-  {id:'SO 157', nazev:'Stezka pro pěší a cyklisty (Tesco–Buriánkův Dvůr)',
+  {id:'SO 157', kmOd:0.000, kmDo:3.700, barva:'#c0392b', cela:true, nazev:'Stezka pro pěší a cyklisty (Tesco–Buriánkův Dvůr) (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Rozpiska', nazev:'157 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_157/157_00_desky_rozpiska.pdf'},
      {typ:'📑 Seznam příloh', nazev:'157 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_157/157_00_seznam priloh.pdf'},
@@ -8735,7 +8728,7 @@ var OSTATNI_SO = [
      {typ:'🚇 Propustek', nazev:'157 06 propustek', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_157/157_06_propustek.pdf'},
      {typ:'📄 Výkres', nazev:'157 07 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_157/157_07_Vyt_vyk.pdf'}
    ]},
-  {id:'SO 161', nazev:'Dopravní značení',
+  {id:'SO 161', kmOd:0.000, kmDo:3.700, barva:'#27ae60', cela:true, nazev:'Dopravní značení (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Rozpiska', nazev:'161 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_161/161_00_desky_rozpiska.pdf'},
      {typ:'📑 Seznam příloh', nazev:'161 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_161/161_00_seznam priloh.pdf'},
@@ -8743,7 +8736,7 @@ var OSTATNI_SO = [
      {typ:'📐 Situace', nazev:'161 02 Situace 1 cast', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_161/161_02_Situace 1 cast.pdf'},
      {typ:'📐 Situace', nazev:'161 03 Situace 2 cast', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_161/161_03_Situace 2 cast.pdf'}
    ]},
-  {id:'SO 162', nazev:'Dopravně inženýrské opatření',
+  {id:'SO 162', kmOd:0.000, kmDo:3.700, barva:'#d35400', cela:true, nazev:'Dopravně inženýrské opatření (km 0,000–3,700)',
    vykresy: [
      {typ:'📄 Výkres', nazev:'SO 162.-Dopravně inženýrské opatření', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 162.-Dopravně inženýrské opatření/SO 162.-Dopravně inženýrské opatření.R1.Published.pdf'},
      {typ:'📑 Rozpiska', nazev:'162 00 desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_162/162_00_desky.pdf'},
@@ -8791,7 +8784,7 @@ var OSTATNI_SO = [
      {typ:'📄 Výkres', nazev:'162 19 OT-E5', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_162/SO_162/162_19_OT-E5.pdf'},
      {typ:'📄 Výkres', nazev:'162 20 OT-E7', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_162/SO_162/162_20_OT-E7.pdf'}
    ]},
-  {id:'SO 181', nazev:'Opravy stávajících komunikací',
+  {id:'SO 181', kmOd:0.000, kmDo:3.700, barva:'#2c3e50', cela:true, nazev:'Opravy stávajících komunikací (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Rozpiska', nazev:'181 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_181/181_00_desky_rozpiska.pdf'},
      {typ:'📑 Seznam příloh', nazev:'181 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_181/181_00_seznam priloh.pdf'},
@@ -8800,7 +8793,7 @@ var OSTATNI_SO = [
      {typ:'✂️ Řezy', nazev:'181 03 vzor pric rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_181/181_03_vzor pric rez.pdf'},
      {typ:'📐 Situace', nazev:'181 04 situace sobeslavska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_181/181_04_situace sobeslavska.pdf'}
    ]},
-  {id:'SO 361', nazev:'Podchycení meliorací',
+  {id:'SO 361', kmOd:0.000, kmDo:3.700, barva:'#7f8c8d', cela:true, nazev:'Podchycení meliorací (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Seznam příloh', nazev:'361 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_361_Podchycení_stávajících_meliorací/361_00_Seznam_priloh.pdf'},
      {typ:'📑 Rozpiska', nazev:'361 00 desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_361_Podchycení_stávajících_meliorací/361_00_desky.pdf'},
@@ -8819,62 +8812,7 @@ var OSTATNI_SO = [
      {typ:'📄 Výkres', nazev:'361 07 Tabulky drenu', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_361_Podchycení_stávajících_meliorací/361_07_Tabulky_drenu.pdf'},
      {typ:'📄 Výkres', nazev:'361 08 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_361_Podchycení_stávajících_meliorací/361_08_VV.pdf'}
    ]},
-  {id:'SO 421', nazev:'Veřejné osvětlení (VO)',
-   vykresy: [
-     {typ:'📑 Rozpiska', nazev:'D15 SO421 000 DESKY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_000_DESKY.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 000 OBSAH', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_000_OBSAH.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'D15 SO421 001 TECHNICKA ZPRAVA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_001_TECHNICKA ZPRAVA.pdf'},
-     {typ:'📐 Situace', nazev:'D15 SO421 002 SITUACE UL. SOBESLAVSKA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_002_SITUACE UL. SOBESLAVSKA.pdf'},
-     {typ:'📐 Situace', nazev:'D15 SO421 003 SITUACE U REKY LUZNICE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_003_SITUACE U REKY LUZNICE.pdf'},
-     {typ:'📐 Situace', nazev:'D15 SO421 004 SITUACE KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_004_SITUACE KM 3.115.pdf'},
-     {typ:'📐 Situace', nazev:'D15 SO421 005 SITUACE PROVIZORNI KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_005_SITUACE PROVIZORNI KM 3.115.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 006 SCHEMA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_006_SCHEMA.pdf'},
-     {typ:'✂️ Vzor. řezy', nazev:'D15 SO421 007 VZOROVE REZY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_007_VZOROVE REZY.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 008 KOO HORKOVOD', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_008_KOO HORKOVOD.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 009 ZALOZENI K1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_009_ZALOZENI K1.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 010 VYT VYKRES UL. SOBESLAVSKA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_010_VYT VYKRES UL. SOBESLAVSKA.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 011 VYT VYKRES U REKY LUZNICE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_011_VYT VYKRES U REKY LUZNICE.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 012 VYT VYKRES PROVIZORNI KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_012_VYT VYKRES PROVIZORNI KM 3.115.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO421 013 VYT VYKRES KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_013_VYT VYKRES KM 3.115.pdf'}
-   ]},
-  {id:'SO 422', nazev:'VO stezky pro pěší a cyklisty',
-   vykresy: [
-     {typ:'📑 Rozpiska', nazev:'D15 SO422 000 DESKY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_000_DESKY.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO422 000 OBSAH', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_000_OBSAH.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'D15 SO422 001 TECHNICKA ZPRAVA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_001_TECHNICKA ZPRAVA.pdf'},
-     {typ:'📐 Situace', nazev:'D15 SO422 002 SITUACE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_002_SITUACE.pdf'},
-     {typ:'📄 Výkres', nazev:'D15 SO422 003 SCHEMA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_003_SCHEMA.pdf'},
-     {typ:'✂️ Vzor. řezy', nazev:'D15 SO422 004 VZOROVE REZY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_004_VZOROVE REZY.pdf'},
-     {typ:'📍 Vytyčení', nazev:'D15 SO422 005 VYTYCOVACI VYKRES', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_005_VYTYCOVACI VYKRES.pdf'}
-   ]},
-  {id:'SO 801', nazev:'Technická rekultivace',
-   vykresy: [
-     {typ:'📑 Rozpiska', nazev:'801 0 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_0_Desky.R1.Published.pdf'},
-     {typ:'📑 Seznam příloh', nazev:'801 0 Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_0_Sezpril.R1.Published.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'801 1.-Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_1.-Technicka_zprava.R1.Published.pdf'},
-     {typ:'📐 Situace', nazev:'801 2 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_2_Situace.R1.Published.pdf'},
-     {typ:'✂️ Vzor. řezy', nazev:'801 3 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_3_Vzorove pricne rezy.R1.Published.pdf'},
-     {typ:'📄 Výkres', nazev:'801 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_00_SP.pdf'},
-     {typ:'📑 Rozpiska', nazev:'801 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_00_desky_rozpiska.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'801 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_01_TZ.pdf'},
-     {typ:'📐 Situace', nazev:'801 02 1 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_02_1_Situace.pdf'},
-     {typ:'📐 Situace', nazev:'801 02 2 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_02_2_Situace.pdf'},
-     {typ:'✂️ Řezy', nazev:'801 03 Rezy deponie', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_03_Rezy_deponie.pdf'}
-   ]},
-  {id:'SO 811', nazev:'Vegetační úpravy',
-   vykresy: [
-     {typ:'📑 Rozpiska', nazev:'811 00a Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_00a_Desky.R1.Published.pdf'},
-     {typ:'📑 Seznam příloh', nazev:'811 00b Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_00b_Sezpril.R1.Published.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'811 01 Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_01_Technicka zprava.R1.Published.pdf'},
-     {typ:'📐 Situace', nazev:'811 02 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_02_Situace.R1.Published.pdf'},
-     {typ:'📑 Rozpiska', nazev:'811 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_00_desky_rozpiska.pdf'},
-     {typ:'📑 Seznam příloh', nazev:'811 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_00_seznam priloh.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'811 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_01_Technicka zprava.pdf'},
-     {typ:'📐 Situace', nazev:'811 02 situace km 0,0-1,5', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_02_situace km 0,0-1,5.pdf'},
-     {typ:'📐 Situace', nazev:'811 03 situace km 1,3-2,4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_03_situace km 1,3-2,4.pdf'},
-     {typ:'📐 Situace', nazev:'811 04 situace km 2,3-3,6', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_04_situace km 2,3-3,6.pdf'}
-   ]},
-  {id:'SO 371-381', nazev:'Přeložka VaK',
+  {id:'SO 371-381', kmOd:0.000, kmDo:3.700, barva:'#c2185b', cela:true, nazev:'Přeložka VaK (km 0,000–3,700)',
    vykresy: [
      {typ:'📑 Seznam příloh', nazev:'00 Seznam příloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_371-381_Přeložka_VaK-koord_VST_sro/00_Seznam příloh.pdf'},
      {typ:'📑 Rozpiska', nazev:'00 Titulní list', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_371-381_Přeložka_VaK-koord_VST_sro/00_Titulní list.pdf'},
@@ -8893,7 +8831,64 @@ var OSTATNI_SO = [
      {typ:'📄 Výkres', nazev:'D.2.3 PP přeložky kanalizace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_371-381_Přeložka_VaK-koord_VST_sro/D.2.3_PP_přeložky_kanalizace.pdf'},
      {typ:'📄 Výkres', nazev:'D.2.4 Výpis prvků revizních šachet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_371-381_Přeložka_VaK-koord_VST_sro/D.2.4_Výpis_prvků_revizních_šachet.pdf'}
    ]},
+  {id:'SO 421', kmOd:0.000, kmDo:3.700, barva:'#00838f', cela:true, nazev:'Veřejné osvětlení (VO) (km 0,000–3,700)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'D15 SO421 000 DESKY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_000_DESKY.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 000 OBSAH', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_000_OBSAH.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'D15 SO421 001 TECHNICKA ZPRAVA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_001_TECHNICKA ZPRAVA.pdf'},
+     {typ:'📐 Situace', nazev:'D15 SO421 002 SITUACE UL. SOBESLAVSKA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_002_SITUACE UL. SOBESLAVSKA.pdf'},
+     {typ:'📐 Situace', nazev:'D15 SO421 003 SITUACE U REKY LUZNICE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_003_SITUACE U REKY LUZNICE.pdf'},
+     {typ:'📐 Situace', nazev:'D15 SO421 004 SITUACE KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_004_SITUACE KM 3.115.pdf'},
+     {typ:'📐 Situace', nazev:'D15 SO421 005 SITUACE PROVIZORNI KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_005_SITUACE PROVIZORNI KM 3.115.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 006 SCHEMA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_006_SCHEMA.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'D15 SO421 007 VZOROVE REZY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_007_VZOROVE REZY.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 008 KOO HORKOVOD', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_008_KOO HORKOVOD.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 009 ZALOZENI K1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_009_ZALOZENI K1.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 010 VYT VYKRES UL. SOBESLAVSKA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_010_VYT VYKRES UL. SOBESLAVSKA.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 011 VYT VYKRES U REKY LUZNICE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_011_VYT VYKRES U REKY LUZNICE.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 012 VYT VYKRES PROVIZORNI KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_012_VYT VYKRES PROVIZORNI KM 3.115.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO421 013 VYT VYKRES KM 3.115', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_421_Prelozka VO/D15_SO421_013_VYT VYKRES KM 3.115.pdf'}
+   ]},
+  {id:'SO 422', kmOd:0.000, kmDo:3.700, barva:'#5d4037', cela:true, nazev:'VO stezky pro pěší a cyklisty (km 0,000–3,700)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'D15 SO422 000 DESKY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_000_DESKY.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO422 000 OBSAH', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_000_OBSAH.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'D15 SO422 001 TECHNICKA ZPRAVA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_001_TECHNICKA ZPRAVA.pdf'},
+     {typ:'📐 Situace', nazev:'D15 SO422 002 SITUACE', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_002_SITUACE.pdf'},
+     {typ:'📄 Výkres', nazev:'D15 SO422 003 SCHEMA', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_003_SCHEMA.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'D15 SO422 004 VZOROVE REZY', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_004_VZOROVE REZY.pdf'},
+     {typ:'📍 Vytyčení', nazev:'D15 SO422 005 VYTYCOVACI VYKRES', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.5. Elektro_a_sdělovací_objekty/SO_422_Verejne osvetleni stezky pro pesi a cyklisty/D15_SO422_005_VYTYCOVACI VYKRES.pdf'}
+   ]},
+  {id:'SO 801', kmOd:0.000, kmDo:3.700, barva:'#455a64', cela:true, nazev:'Technická rekultivace (km 0,000–3,700)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'801 0 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_0_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'801 0 Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_0_Sezpril.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'801 1.-Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_1.-Technicka_zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'801 2 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_2_Situace.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'801 3 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 801.-Technická rekultivace/801_3_Vzorove pricne rezy.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'801 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_00_SP.pdf'},
+     {typ:'📑 Rozpiska', nazev:'801 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_00_desky_rozpiska.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'801 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'801 02 1 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_02_1_Situace.pdf'},
+     {typ:'📐 Situace', nazev:'801 02 2 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_02_2_Situace.pdf'},
+     {typ:'✂️ Řezy', nazev:'801 03 Rezy deponie', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_801_Technická_rekultivace/801_03_Rezy_deponie.pdf'}
+   ]},
+  {id:'SO 811', kmOd:0.000, kmDo:3.700, barva:'#f9a825', cela:true, nazev:'Vegetační úpravy (km 0,000–3,700)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'811 00a Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_00a_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'811 00b Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_00b_Sezpril.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'811 01 Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_01_Technicka zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'811 02 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 811.- Vegetační úpravy/811_02_Situace.R1.Published.pdf'},
+     {typ:'📑 Rozpiska', nazev:'811 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'811 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'811 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_01_Technicka zprava.pdf'},
+     {typ:'📐 Situace', nazev:'811 02 situace km 0,0-1,5', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_02_situace km 0,0-1,5.pdf'},
+     {typ:'📐 Situace', nazev:'811 03 situace km 1,3-2,4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_03_situace km 1,3-2,4.pdf'},
+     {typ:'📐 Situace', nazev:'811 04 situace km 2,3-3,6', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.7_Objekty_úpravy_území/SO_811_Vegetační_úpravy/811_04_situace km 2,3-3,6.pdf'}
+   ]},
 ];
+
+var OSTATNI_SO = [];
 
 // ═══════════════════════════════════
 //  ETAPY VÝSTAVBY - prázdné (přijdou s realizační dokumentací)
@@ -8992,14 +8987,14 @@ function buildSO() {
   var mainGroup = L.layerGroup().addTo(map);
   layerGroups.so = mainGroup;
 
-  // Odstupňuj offset od osy podle počtu už nakreslených SO, které se km-rozsahem překrývají,
-  // ať se (hlavně celotrasové) linie nepřekrývají. Každá další překrývající se odsadí o 16 m.
-  var _drawnRanges = [];
+  // Offset od osy: překrývající se linie odsazuj STŘÍDAVĚ na obě strany (menší rozptyl, méně matoucí).
+  var _drawn = [];
   function _soOffsetFor(so){
     var n=0;
-    for(var i=0;i<_drawnRanges.length;i++){ var r=_drawnRanges[i]; if(so.kmOd <= r[1] && so.kmDo >= r[0]) n++; }
-    _drawnRanges.push([so.kmOd, so.kmDo]);
-    return 18 + n*16;
+    for(var i=0;i<_drawn.length;i++){ var r=_drawn[i]; if(so.kmOd <= r[1] && so.kmDo >= r[0]) n++; }
+    _drawn.push([so.kmOd, so.kmDo]);
+    var mag = 16 + Math.floor(n/2)*15;     // 16,16,31,31,46,46…
+    return ((n % 2 === 0) ? 1 : -1) * mag;  // střídej levá/pravá strana osy
   }
 
   STAVEBNI_OBJEKTY.forEach(function(so) {
@@ -9008,8 +9003,7 @@ function buildSO() {
     var subGroup = L.layerGroup().addTo(mainGroup);
     layerGroups[key] = subGroup;
 
-    var pts = [];
-    var bearList = [];
+    var pts = [], bearList = [];
     var km = so.kmOd;
     while(km <= so.kmDo + 0.001) {
       var pos = realKmToLatLng(km);
@@ -9018,44 +9012,36 @@ function buildSO() {
         var bear = bearingAtGpxM(gpxM);
         var perpRad = (bear - 90) * Math.PI / 180;
         var off = soOffset / 6371000;
-        var lat = pos[0] + off*(180/Math.PI)*Math.cos(perpRad);
-        var lng = pos[1] + off*(180/Math.PI)*Math.sin(perpRad)/Math.cos(pos[0]*Math.PI/180);
-        pts.push([lat, lng]);
+        pts.push([ pos[0] + off*(180/Math.PI)*Math.cos(perpRad),
+                   pos[1] + off*(180/Math.PI)*Math.sin(perpRad)/Math.cos(pos[0]*Math.PI/180) ]);
         bearList.push(bear);
       }
       km = Math.round((km + 0.020) * 1000) / 1000;
     }
     if(pts.length < 2) return;
 
-    var line = L.polyline(pts, {color:so.barva, weight:8, opacity:0.6});
+    var line = L.polyline(pts, {color:so.barva, weight:6, opacity:0.85});
     var _mid=(so.kmOd+so.kmDo)/2;
-    if(so.vykresy && so.vykresy.length){
-      (function(soo,mid){ line.on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(Object.assign({km:mid}, soo)); }); })(so,_mid);
-      line.bindTooltip((so.nazev||so.id)+' · klepni na výkresy', {sticky:true, className:'so-tooltip'});
-    } else {
-      line.bindPopup('<b>'+so.id+'</b><br>'+(so.nazev||'')+'<br>km <b>'+fmtKm(so.kmOd)+' – '+fmtKm(so.kmDo)+'</b>', {className:'so-tooltip', maxWidth:240});
-    }
+    (function(soo,mid){
+      line.on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(Object.assign({km:mid}, soo)); });
+    })(so,_mid);
+    line.bindTooltip('<b>'+so.id+'</b> · '+(so.nazev||''), {sticky:true, className:'so-tooltip', direction:'top'});
     line.addTo(subGroup);
 
-    var step = 20;
-    for(var pi = 1; pi < pts.length - 1; pi += step) {
-      var bear2 = bearList[pi];
-      var rot = bear2;
-      if(rot > 90 && rot < 270) rot = (rot + 180) % 360;
-      var perpRad2 = (bear2 - 90) * Math.PI / 180;
-      var offExtra = 20 / 6371000;
-      var latL = pts[pi][0] + offExtra*(180/Math.PI)*Math.cos(perpRad2);
-      var lngL = pts[pi][1] + offExtra*(180/Math.PI)*Math.sin(perpRad2)/Math.cos(pts[pi][0]*Math.PI/180);
-      var lbl = L.divIcon({
-        className:'',
-        html:'<div style="color:'+so.barva+';font-size:14px;font-weight:800;white-space:nowrap;'+
-             'text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'+
-             'transform:rotate('+_lblRot(rot+90).toFixed(0)+'deg);transform-origin:0 50%;">'+
-             so.id+'</div>',
-        iconSize:[0,0], iconAnchor:[0,0],
-      });
-      L.marker([latL,lngL],{icon:lbl,interactive:false}).addTo(subGroup);
-    }
+    // JEDEN popisek na linii (u ~1/3 délky), na straně offsetu, čitelně natočený (_lblRot – nikdy vzhůru nohama).
+    var pi = Math.min(pts.length-1, Math.max(1, Math.round(pts.length*0.33)));
+    var bear2 = bearList[pi] || bearList[0] || 0;
+    var sideSign = soOffset >= 0 ? 1 : -1;
+    var perpRad2 = (bear2 - 90) * Math.PI / 180;
+    var offExtra = (14*sideSign) / 6371000;
+    var latL = pts[pi][0] + offExtra*(180/Math.PI)*Math.cos(perpRad2);
+    var lngL = pts[pi][1] + offExtra*(180/Math.PI)*Math.sin(perpRad2)/Math.cos(pts[pi][0]*Math.PI/180);
+    var lbl = L.divIcon({ className:'',
+      html:'<div style="color:'+so.barva+';font-size:12px;font-weight:800;white-space:nowrap;'+
+           'text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'+
+           'transform:rotate('+_lblRot(bear2+90).toFixed(0)+'deg);transform-origin:0 50%;">'+so.id+'</div>',
+      iconSize:[0,0], iconAnchor:[0,0] });
+    L.marker([latL,lngL],{icon:lbl,interactive:false}).addTo(subGroup);
   });
 }
 
