@@ -496,13 +496,13 @@ textarea.note-field { min-height:80px; resize:vertical; }
 }
 
 
-/* ── Propustky ── */
-.prop-marker {
+/* ── Bodové SO (markery) ── */
+.objekt-marker {
   background: transparent !important;
   border: none !important;
   overflow: visible !important;
 }
-.prop-pin {
+.objekt-pin {
   min-width: 28px; height: 26px;
   padding: 0 9px;
   background: #1565c0;
@@ -515,7 +515,7 @@ textarea.note-field { min-height:80px; resize:vertical; }
   transition: transform .15s;
   white-space: nowrap;
 }
-.prop-pin:hover { transform: scale(1.2); }
+.objekt-pin:hover { transform: scale(1.2); }
 
 /* Doplňkové SO markery (000, 300, 400, 500) - menší, barevné dle kategorie */
 .doplnek-marker {
@@ -556,8 +556,8 @@ textarea.note-field { min-height:80px; resize:vertical; }
 }
 .nn-pin:hover { transform:scale(1.2); }
 
-/* Propustek detail panel */
-#prop-panel {
+/* Bodový objekt SO – detail panel */
+#objekt-panel {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 60vh;
@@ -567,22 +567,22 @@ textarea.note-field { min-height:80px; resize:vertical; }
   display: none;
   flex-direction: column;
 }
-#prop-panel.open { display: flex; }
-#prop-panel.fullscreen { height: 100vh; top: 0; }
-#prop-header {
+#objekt-panel.open { display: flex; }
+#objekt-panel.fullscreen { height: 100vh; top: 0; }
+#objekt-header {
   display: flex; align-items: center;
   padding: 8px 10px; background: var(--panel2);
   gap: 6px; flex-shrink: 0;
 }
-#prop-title { flex:1; font-size:13px; font-weight:700; color:#4fc3f7; }
-#btn-prop-fs, #btn-prop-close {
+#objekt-title { flex:1; font-size:13px; font-weight:700; color:#4fc3f7; }
+#btn-objekt-fs, #btn-objekt-close {
   background:none; border:none; color:var(--text2); font-size:18px; cursor:pointer; padding:4px 6px;
 }
-#prop-tabs { display:flex; gap:4px; padding:6px 10px; background:var(--bg); flex-shrink:0; overflow-x:auto; }
-#prop-content { flex:1; display:flex; flex-direction:column; min-height:0; }
+#objekt-tabs { display:flex; gap:4px; padding:6px 10px; background:var(--bg); flex-shrink:0; overflow-x:auto; }
+#objekt-content { flex:1; display:flex; flex-direction:column; min-height:0; }
 
-/* Propustek poznámky sekce */
-#prop-notes-section {
+/* Bodový objekt SO – poznámky */
+#objekt-notes-section {
   flex-shrink: 0;
   background: var(--panel2);
   border-top: 1px solid var(--border);
@@ -590,25 +590,25 @@ textarea.note-field { min-height:80px; resize:vertical; }
   overflow-y: auto;
   padding: 8px 12px;
 }
-#prop-notes-header {
+#objekt-notes-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 8px;
 }
-#prop-notes-header span { font-size: 12px; font-weight: 700; color: var(--accent2); }
-#btn-prop-add-note {
+#objekt-notes-header span { font-size: 12px; font-weight: 700; color: var(--accent2); }
+#btn-objekt-add-note {
   background: var(--accent); color: #fff; border: none;
   border-radius: 6px; padding: 4px 10px; font-size: 11px; cursor: pointer;
 }
-.prop-note-item {
+.objekt-note-item {
   background: var(--panel); border-radius: 6px; padding: 6px 8px;
   margin-bottom: 6px; font-size: 12px;
 }
-.prop-note-meta { color: var(--text2); font-size: 10px; margin-bottom: 2px; }
-.prop-note-text { color: var(--text); line-height: 1.4; }
-.prop-note-del { float: right; background: none; border: none; color: var(--accent); cursor: pointer; font-size: 12px; }
+.objekt-note-meta { color: var(--text2); font-size: 10px; margin-bottom: 2px; }
+.objekt-note-text { color: var(--text); line-height: 1.4; }
+.objekt-note-del { float: right; background: none; border: none; color: var(--accent); cursor: pointer; font-size: 12px; }
 
-/* Propustek nová poznámka form */
-#prop-note-form {
+/* Bodový objekt SO – nová poznámka */
+#objekt-note-form {
   display: none;
   padding: 8px 12px;
   background: var(--panel2);
@@ -617,14 +617,14 @@ textarea.note-field { min-height:80px; resize:vertical; }
   gap: 6px;
   flex-direction: column;
 }
-#prop-note-form.open { display: flex; }
+#objekt-note-form.open { display: flex; }
 
 
 /* Blokovat touch na mapě při otevřeném PDF panelu */
 
 
 /* PDF iframe scroll a zoom */
-#pdf-frame, #prop-iframe {
+#pdf-frame, #objekt-iframe {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -633,8 +633,8 @@ textarea.note-field { min-height:80px; resize:vertical; }
 }
 
 /* Panel zachytí touch eventy - mapa nad panelem zůstane aktivní */
-#pdf-panel, #prop-panel { touch-action: pan-x pan-y pinch-zoom; }
-#pdf-frame, #prop-iframe { touch-action: pan-x pan-y pinch-zoom; }
+#pdf-panel, #objekt-panel { touch-action: pan-x pan-y pinch-zoom; }
+#pdf-frame, #objekt-iframe { touch-action: pan-x pan-y pinch-zoom; }
 
 @keyframes pulse-ring {
   0%   { transform: scale(0.8); opacity: 1; }
@@ -1155,7 +1155,7 @@ document.addEventListener('touchend', function(e){
     var target = e.target;
     var inInteractive = target.closest && (
       target.closest('#pdf-panel') ||
-      target.closest('#prop-panel') ||
+      target.closest('#objekt-panel') ||
       target.closest('#photo-fs') ||
       target.closest('#layers-panel') ||
       target.closest('#note-modal') ||
@@ -1636,8 +1636,8 @@ document.addEventListener('touchend', function(e){
   </div><!-- /ukoly -->
   <div data-perm="objekty">
   <div class="layer-row">
-    <label>🔵 Mosty / lávka / nadjezd (SO 201, 202, 221, 222, 651)</label>
-    <label class="toggle"><input type="checkbox" id="lyr-prop" checked onchange="toggleLayer('propustky',this.checked)"><span class="toggle-slider"></span></label>
+    <label>🔵 Bodové SO (mosty, lávka, nadjezd, přeložky IS…)</label>
+    <label class="toggle"><input type="checkbox" id="lyr-objekt" checked onchange="toggleLayer('objektySO',this.checked)"><span class="toggle-slider"></span></label>
   </div>
   <div class="layer-row">
     <label>🧩 Doplňkové SO (000/300/400/500)</label>
@@ -2432,149 +2432,363 @@ var DOCS_TZ = [];
 // Ostatní listy objektů (přechody, vrstevnice, vlečné křivky, spárořez, vytyčovací body) – RDS čistopis
 var DOCS_OST = [];
 
-// PROPUSTKY - GPS markery na mapě, kliknutí otevře PDF panel se VŠEMI výkresy daného SO
+// BODOVE_SO - GPS markery na mapě, kliknutí otevře PDF panel se VŠEMI výkresy daného SO
 // SO 104 (P1) a SO 105 (P2) - každý má kompletní sadu: situace, pod. profil, vzor. řezy,
 // char. řezy, propustek nový stav, dopravní značení, technická zpráva
-var PROPUSTKY = [
-  {id:'SO 201', km:0.300, nazev:'Most přes Lužnici (km ~0,3)',
+// Kompletní výkresy hlavní trasy SO 101 (silnice II/137) – ukazují se u KAŽDÉHO staničení.
+var SO101_VYKRESY = [
+  {typ:'📑 Seznam příloh', nazev:'101 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_00_Seznam priloh.pdf'},
+  {typ:'📑 Rozpiska', nazev:'101 00 rozpiska desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_00_rozpiska_desky.pdf'},
+  {typ:'📋 Tech. zpráva', nazev:'101 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_01_TZ.pdf'},
+  {typ:'📐 Situace', nazev:'101 02 1 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_02_1_Situace.pdf'},
+  {typ:'📐 Situace', nazev:'101 02 2 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_02_2_Situace.pdf'},
+  {typ:'📐 Situace', nazev:'101 02 3 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_02_3_Situace.pdf'},
+  {typ:'📄 Výkres', nazev:'101 03 1 PP-1-cast km 0.000-2.300', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_03_1_PP-1-cast_km_0.000-2.300.pdf'},
+  {typ:'📄 Výkres', nazev:'101 03 2 PP-2-cast km 2.100-3.715', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_03_2_PP-2-cast_km_2.100-3.715.pdf'},
+  {typ:'📄 Výkres', nazev:'101 04 1 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_04_1_VPR.pdf'},
+  {typ:'📄 Výkres', nazev:'101 04 2 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_04_2_VPR.pdf'},
+  {typ:'📄 Výkres', nazev:'101 04 3 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_04_3_VPR.pdf'},
+  {typ:'📄 Výkres', nazev:'101 05 1 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_05_1_PR.pdf'},
+  {typ:'📄 Výkres', nazev:'101 05 2 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_05_2_PR.pdf'},
+  {typ:'📑 Rozpiska', nazev:'D 1 2 6 1 00 Desky Rozp', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_00_Desky_Rozp.pdf'},
+  {typ:'📑 Seznam příloh', nazev:'D 1 2 6 1 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_00_Seznam_priloh.pdf'},
+  {typ:'📋 Tech. zpráva', nazev:'D 1 2 6 1 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_01_TZ.pdf'},
+  {typ:'📐 Situace', nazev:'D 1 2 6 1 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_02_Situace.pdf'},
+  {typ:'🗺️ Půdorys', nazev:'D 1 2 6 1 03 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_03_Pudorys.pdf'},
+  {typ:'📊 Pod. profil', nazev:'D 1 2 6 1 04 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_04_Podelny_rez.pdf'},
+  {typ:'✂️ Vzor. řezy', nazev:'D 1 2 6 1 05 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_05_Vzorove_pricne_rezy.pdf'},
+  {typ:'📄 Výkres', nazev:'D 1 2 6 1 06 Pohledy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_06_Pohledy.pdf'},
+  {typ:'✂️ Řezy', nazev:'D 1 2 6 1 08 Tvar NK-Rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_08_Tvar_NK-Rezy.pdf'},
+  {typ:'🔩 Tvar', nazev:'D 1 2 6 1 09 Tvar NK-Pohledy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_09_Tvar_NK-Pohledy.pdf'},
+  {typ:'🔩 Tvar', nazev:'D 1 2 6 1 10 Tvar rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_10_Tvar_rims.pdf'},
+  {typ:'🔩 Výztuž', nazev:'D 1 2 6 1 11 Schema vyztuze NK a rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_11_Schema_vyztuze_NK_a_rims.pdf'},
+  {typ:'📄 Výkres', nazev:'D 1 2 6 1 13 Schema technologie vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_13_Schema_technologie_vystavby.pdf'},
+  {typ:'🗺️ Půdorys', nazev:'D 1 2 6 1 14 Vykopy a pazeni-Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_06_01_Pricny_ramovy_propustek_v_km_0_975/D_1_2_6_1_14_Vykopy_a_pazeni-Pudorys.pdf'},
+  {typ:'📄 Výkres', nazev:'101 07 1 Upravy a sanace podlozi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_07_1_Upravy_a_sanace_podlozi.pdf'},
+  {typ:'📄 Výkres', nazev:'101 07 2 Upravy a sanace podlozi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_07_2_Upravy_a_sanace_podlozi.pdf'},
+  {typ:'📄 Výkres', nazev:'101 07 3 Upravy a sanace podlozi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_07_3_Upravy_a_sanace_podlozi.pdf'},
+  {typ:'📄 Výkres', nazev:'101 08 1 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_08_1_Vyt_vyk.pdf'},
+  {typ:'📄 Výkres', nazev:'101 08 2 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_08_2_Vyt_vyk.pdf'},
+  {typ:'📄 Výkres', nazev:'101 08 3 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_101/101_08_3_Vyt_vyk.pdf'}
+];
+
+var BODOVE_SO = [
+  {id:'SO 151', km:0.224, nazev:'Přeložka místní komunikace (km 0,224)',
    vykresy: [
-     {typ:'📑 Rozpiska', nazev:'000 Desky Rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_000_Desky_Rozpiska.pdf'},
-     {typ:'📑 Rozpiska', nazev:'000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_000_Seznam_priloh.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'001 Technicka zprava ROZP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_001_Technicka_zprava_ROZP.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'001 Technicka zprava TEXT', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_001_Technicka_zprava_TEXT.pdf'},
-     {typ:'📐 Situace', nazev:'002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_002_Situace.pdf'},
-     {typ:'🗺️ Půdorys', nazev:'003 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_003_Pudorys.pdf'},
-     {typ:'📊 Pod. profil', nazev:'004 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_004_Podelny_rez.pdf'},
-     {typ:'✂️ Řezy', nazev:'005 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_005_Vzorove_pricne_rezy.pdf'},
-     {typ:'✂️ Řezy', nazev:'006.1 Pricne rezy 1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_006.1_Pricne_rezy_1.pdf'},
-     {typ:'✂️ Řezy', nazev:'006.2 Pricne rezy 2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_006.2_Pricne_rezy_2.pdf'},
-     {typ:'📍 Vytyčení', nazev:'008 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_008_Vytycovaci_schema.pdf'},
-     {typ:'📄 Výkres', nazev:'009 Schema postupu vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_009_Schema_postupu_vystavby.pdf'},
-     {typ:'📄 Výkres', nazev:'010 Staticky vypocet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_010_Staticky_vypocet.pdf'},
-     {typ:'📑 Rozpiska', nazev:'010 Staticky vypocet ROZP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_010_Staticky_vypocet_ROZP.pdf'},
-     {typ:'📄 Výkres', nazev:'101 Vykopy nasypy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_101_Vykopy_nasypy_a_pazeni.pdf'},
-     {typ:'📄 Výkres', nazev:'102 Piloty a zemni kotvy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_102_Piloty_a_zemni_kotvy.pdf'},
-     {typ:'🔩 Tvar', nazev:'103 Tvar a vyztuz pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_103_Tvar_a_vyztuz_pilot.pdf'},
-     {typ:'🔩 Tvar', nazev:'201 Tvar opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_201_Tvar_opery_O1.pdf'},
-     {typ:'🔩 Tvar', nazev:'202 Tvar opery O14', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_202_Tvar_opery_O14.pdf'},
-     {typ:'🔩 Tvar', nazev:'203 Tvar oblouku', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_203_Tvar_oblouku.pdf'},
-     {typ:'🔩 Tvar', nazev:'204 Tvar piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_204_Tvar_piliru_P2-P3-P11-P12-P13.pdf'},
-     {typ:'🔩 Tvar', nazev:'205 Tvar piliru P4-P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_205_Tvar_piliru_P4-P10.pdf'},
-     {typ:'🔩 Tvar', nazev:'206 Tvar piliru P5-P9', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_206_Tvar_piliru_P5-P9.pdf'},
-     {typ:'🔩 Tvar', nazev:'207 Tvar piliru P6-P8', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_207_Tvar_piliru_P6-P8.pdf'},
-     {typ:'🔩 Výztuž', nazev:'208 Schema vyztuze opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_208_Schema_vyztuze_opery_O1.pdf'},
-     {typ:'🔩 Výztuž', nazev:'209 Schema vyztuze opery O14', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_209_Schema_vyztuze_opery_O14.pdf'},
-     {typ:'🔩 Výztuž', nazev:'210 Schema vyztuze zakladu piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_210_Schema_vyztuze_zakladu_piliru_P2-P3-P11-P12-P13.pdf'},
-     {typ:'🔩 Výztuž', nazev:'211 Schema vyztuze zakladu P4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_211_Schema_vyztuze_zakladu_P4.pdf'},
-     {typ:'🔩 Výztuž', nazev:'212 Schema vyztuze zakladu P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_212_Schema_vyztuze_zakladu_P10.pdf'},
-     {typ:'🔩 Výztuž', nazev:'213 Schema vyztuze driku piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_213_Schema_vyztuze_driku_piliru_P2-P3-P11-P12-P13.pdf'},
-     {typ:'🔩 Výztuž', nazev:'214 Schema vyztuze driku piliru P4 P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_214_Schema_vyztuze_driku_piliru_P4_P10.pdf'},
-     {typ:'🔩 Výztuž', nazev:'215 Schema vyztuze oblouku', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_215_Schema_vyztuze_oblouku.pdf'},
-     {typ:'🔩 Výztuž', nazev:'216 Schema vyztuze stojek P5 P6 P8 P9', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_216_Schema_vyztuze_stojek_P5_P6_P8_P9.pdf'},
-     {typ:'🔩 Tvar', nazev:'301 Tvar nosne konstrukce', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_301_Tvar_nosne_konstrukce.pdf'},
-     {typ:'🔩 Výztuž', nazev:'302 Schema vyztuze nosne konstrukce', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_302_Schema_vyztuze_nosne_konstrukce.pdf'},
-     {typ:'🔩 Výztuž', nazev:'303 Schema predpinaci vyztuze', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_303_Schema_predpinaci_vyztuze.pdf'},
-     {typ:'🔩 Tvar', nazev:'401 Tvar rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_401_Tvar_rims.pdf'},
-     {typ:'🔩 Výztuž', nazev:'402 Schema vyztuze rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_402_Schema_vyztuze_rims.pdf'},
-     {typ:'📊 Pod. profil', nazev:'403 Odvodneni pod mostem podelny profil zlabu', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_403_Odvodneni_pod_mostem_podelny_profil_zlabu.pdf'},
-     {typ:'📄 Výkres', nazev:'404 Odvodneni pod mostem propustek pod ucelovou komunikaci', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_404_Odvodneni_pod_mostem_propustek_pod_ucelovou_komunikaci.pdf'},
-     {typ:'📄 Výkres', nazev:'405 Odvodneni pod mostem Vyustni objekt do Luznice', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_405_Odvodneni_pod_mostem_Vyustni_objekt_do_Luznice.pdf'},
+     {typ:'📑 Rozpiska', nazev:'151 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'151 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'151 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_01_Technicka zprava.pdf'},
+     {typ:'📐 Situace', nazev:'151 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_02_Situace.pdf'},
+     {typ:'📊 Pod. profil', nazev:'151 03 Podelny profil', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_03_Podelny profil.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'151 04 Vzorovy pricny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_04_Vzorovy pricny rez.pdf'},
+     {typ:'✂️ Řezy', nazev:'151 05 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_05_Pricne rezy.pdf'},
+     {typ:'📍 Vytyčení', nazev:'151 06 Vytycovaci vykres', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_06_Vytycovaci vykres.pdf'},
+     {typ:'📄 Výkres', nazev:'151 07 Propustek', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_151/151_07_Propustek.pdf'}
+   ]},
+  {id:'SO 201', km:0.300, nazev:'Most přes Lužnici (km 0,300)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'201 000 Desky Rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_000_Desky_Rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'201 000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_000_Seznam_priloh.pdf'},
+     {typ:'📑 Rozpiska', nazev:'201 001 Technicka zprava ROZP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_001_Technicka_zprava_ROZP.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'201 001 Technicka zprava TEXT', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_001_Technicka_zprava_TEXT.pdf'},
+     {typ:'📐 Situace', nazev:'201 002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_002_Situace.pdf'},
+     {typ:'🗺️ Půdorys', nazev:'201 003 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_003_Pudorys.pdf'},
+     {typ:'📊 Pod. profil', nazev:'201 004 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_004_Podelny_rez.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'201 005 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_005_Vzorove_pricne_rezy.pdf'},
+     {typ:'✂️ Řezy', nazev:'201 006.1 Pricne rezy 1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_006.1_Pricne_rezy_1.pdf'},
+     {typ:'✂️ Řezy', nazev:'201 006.2 Pricne rezy 2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_006.2_Pricne_rezy_2.pdf'},
+     {typ:'📍 Vytyčení', nazev:'201 008 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_008_Vytycovaci_schema.pdf'},
+     {typ:'📄 Výkres', nazev:'201 009 Schema postupu vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_009_Schema_postupu_vystavby.pdf'},
+     {typ:'📄 Výkres', nazev:'201 010 Staticky vypocet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_010_Staticky_vypocet.pdf'},
+     {typ:'📑 Rozpiska', nazev:'201 010 Staticky vypocet ROZP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_010_Staticky_vypocet_ROZP.pdf'},
+     {typ:'📄 Výkres', nazev:'201 101 Vykopy nasypy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_101_Vykopy_nasypy_a_pazeni.pdf'},
+     {typ:'📄 Výkres', nazev:'201 102 Piloty a zemni kotvy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_102_Piloty_a_zemni_kotvy.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 103 Tvar a vyztuz pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_103_Tvar_a_vyztuz_pilot.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 201 Tvar opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_201_Tvar_opery_O1.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 202 Tvar opery O14', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_202_Tvar_opery_O14.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 203 Tvar oblouku', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_203_Tvar_oblouku.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 204 Tvar piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_204_Tvar_piliru_P2-P3-P11-P12-P13.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 205 Tvar piliru P4-P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_205_Tvar_piliru_P4-P10.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 206 Tvar piliru P5-P9', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_206_Tvar_piliru_P5-P9.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 207 Tvar piliru P6-P8', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_207_Tvar_piliru_P6-P8.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 208 Schema vyztuze opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_208_Schema_vyztuze_opery_O1.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 209 Schema vyztuze opery O14', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_209_Schema_vyztuze_opery_O14.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 210 Schema vyztuze zakladu piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_210_Schema_vyztuze_zakladu_piliru_P2-P3-P11-P12-P13.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 211 Schema vyztuze zakladu P4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_211_Schema_vyztuze_zakladu_P4.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 212 Schema vyztuze zakladu P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_212_Schema_vyztuze_zakladu_P10.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 213 Schema vyztuze driku piliru P2-P3-P11-P12-P13', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_213_Schema_vyztuze_driku_piliru_P2-P3-P11-P12-P13.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 214 Schema vyztuze driku piliru P4 P10', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_214_Schema_vyztuze_driku_piliru_P4_P10.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 215 Schema vyztuze oblouku', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_215_Schema_vyztuze_oblouku.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 216 Schema vyztuze stojek P5 P6 P8 P9', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_216_Schema_vyztuze_stojek_P5_P6_P8_P9.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 301 Tvar nosne konstrukce', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_301_Tvar_nosne_konstrukce.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 302 Schema vyztuze nosne konstrukce', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_302_Schema_vyztuze_nosne_konstrukce.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 303 Schema predpinaci vyztuze', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_303_Schema_predpinaci_vyztuze.pdf'},
+     {typ:'🔩 Tvar', nazev:'201 401 Tvar rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_401_Tvar_rims.pdf'},
+     {typ:'🔩 Výztuž', nazev:'201 402 Schema vyztuze rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_402_Schema_vyztuze_rims.pdf'},
+     {typ:'📊 Pod. profil', nazev:'201 403 Odvodneni pod mostem podelny profil zlabu', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_403_Odvodneni_pod_mostem_podelny_profil_zlabu.pdf'},
+     {typ:'📄 Výkres', nazev:'201 404 Odvodneni pod mostem propustek pod ucelovou komunikaci', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_404_Odvodneni_pod_mostem_propustek_pod_ucelovou_komunikaci.pdf'},
+     {typ:'📄 Výkres', nazev:'201 405 Odvodneni pod mostem Vyustni objekt do Luznice', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 201_Most pres Luznici/201_405_Odvodneni_pod_mostem_Vyustni_objekt_do_Luznice.pdf'}
+   ]},
+  {id:'SO 152', km:0.758, nazev:'Přeložky polních cest (km 0,758)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'152 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'152 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'152 01 technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_01_technicka zprava.pdf'},
+     {typ:'📐 Situace', nazev:'152 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_02_Situace.pdf'},
+     {typ:'📊 Pod. profil', nazev:'152 03 Podelny profil', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_03_Podelny profil.pdf'},
+     {typ:'📄 Výkres', nazev:'152 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'152 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'152 06 1 propustek km 0,040', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_06_1_propustek_km_0,040.pdf'},
+     {typ:'📄 Výkres', nazev:'152 06 2 propustek km 0,059', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_06_2_propustek_km_0,059.pdf'},
+     {typ:'📄 Výkres', nazev:'152 07 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_152/152_07_Vyt_vyk.pdf'}
+   ]},
+  {id:'SO 154', km:1.610, nazev:'Přeložka polní cesty (km 1,610)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'154 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'154 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'154 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_01_Technicka zprava.pdf'},
+     {typ:'📐 Situace', nazev:'154 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'154 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'154 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'154 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'154 06 1 propustek km 0,075', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_06_1_propustek_km_0,075.pdf'},
+     {typ:'📄 Výkres', nazev:'154 06 2 propustek km 0,096', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_06_2_propustek_km_0,096.pdf'},
+     {typ:'📄 Výkres', nazev:'154 07 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_154/154_07_Vyt_vyk.pdf'}
    ]},
   {id:'SO 202', km:1.972, nazev:'Most přes vodoteč (km 1,972)',
    vykresy: [
-     {typ:'📑 Rozpiska', nazev:'00 Desky Rozp', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_00_Desky_Rozp.pdf'},
-     {typ:'📑 Rozpiska', nazev:'00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_00_Seznam_priloh.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_01_TZ.pdf'},
-     {typ:'📐 Situace', nazev:'02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_02_Situace.pdf'},
-     {typ:'🗺️ Půdorys', nazev:'03 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_03_Pudorys.pdf'},
-     {typ:'📊 Pod. profil', nazev:'04 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_04_Podelny_rez.pdf'},
-     {typ:'✂️ Řezy', nazev:'05 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_05_Pricne_rezy.pdf'},
-     {typ:'👁️ Pohledy', nazev:'06 Pohledy na opery', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_06_Pohledy_na_opery.pdf'},
-     {typ:'🔩 Tvar', nazev:'07 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_07_Tvar_pilot.pdf'},
-     {typ:'🔩 Tvar', nazev:'08 Tvar opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_08_Tvar_opery_O1.pdf'},
-     {typ:'🔩 Tvar', nazev:'09 Tvar opery O2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_09_Tvar_opery_O2.pdf'},
-     {typ:'🔩 Tvar', nazev:'10 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_10_Tvar_NK.pdf'},
-     {typ:'🔩 Tvar', nazev:'11 Tvar rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_11_Tvar_rims.pdf'},
-     {typ:'🔩 Výztuž', nazev:'12 Schema vyztuze pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_12_Schema_vyztuze_pilot.pdf'},
-     {typ:'🔩 Výztuž', nazev:'13 Schema vyztuze poloramove konstrukce a kridel', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_13_Schema_vyztuze_poloramove_konstrukce_a_kridel.pdf'},
-     {typ:'🔩 Výztuž', nazev:'14 Schema vyztuze prechodovych desek', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_14_Schema_vyztuze_prechodovych_desek.pdf'},
-     {typ:'🔩 Výztuž', nazev:'15 Schema vyztuze rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_15_Schema_vyztuze_rims.pdf'},
-     {typ:'📍 Vytyčení', nazev:'16 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_16_Vytycovaci_schema.pdf'},
-     {typ:'📄 Výkres', nazev:'17 Postup vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_17_Postup vystavby.pdf'},
-     {typ:'📄 Výkres', nazev:'18 Vykopy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_18_Vykopy.pdf'},
-     {typ:'📄 Výkres', nazev:'19 SV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_19_SV.pdf'},
+     {typ:'📑 Rozpiska', nazev:'202 00 Desky Rozp', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_00_Desky_Rozp.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'202 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_00_Seznam_priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'202 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'202 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_02_Situace.pdf'},
+     {typ:'🗺️ Půdorys', nazev:'202 03 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_03_Pudorys.pdf'},
+     {typ:'📊 Pod. profil', nazev:'202 04 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_04_Podelny_rez.pdf'},
+     {typ:'✂️ Řezy', nazev:'202 05 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_05_Pricne_rezy.pdf'},
+     {typ:'📄 Výkres', nazev:'202 06 Pohledy na opery', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_06_Pohledy_na_opery.pdf'},
+     {typ:'🔩 Tvar', nazev:'202 07 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_07_Tvar_pilot.pdf'},
+     {typ:'🔩 Tvar', nazev:'202 08 Tvar opery O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_08_Tvar_opery_O1.pdf'},
+     {typ:'🔩 Tvar', nazev:'202 09 Tvar opery O2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_09_Tvar_opery_O2.pdf'},
+     {typ:'🔩 Tvar', nazev:'202 10 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_10_Tvar_NK.pdf'},
+     {typ:'🔩 Tvar', nazev:'202 11 Tvar rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_11_Tvar_rims.pdf'},
+     {typ:'🔩 Výztuž', nazev:'202 12 Schema vyztuze pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_12_Schema_vyztuze_pilot.pdf'},
+     {typ:'🔩 Výztuž', nazev:'202 13 Schema vyztuze poloramove konstrukce a kridel', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_13_Schema_vyztuze_poloramove_konstrukce_a_kridel.pdf'},
+     {typ:'🔩 Výztuž', nazev:'202 14 Schema vyztuze prechodovych desek', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_14_Schema_vyztuze_prechodovych_desek.pdf'},
+     {typ:'🔩 Výztuž', nazev:'202 15 Schema vyztuze rims', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_15_Schema_vyztuze_rims.pdf'},
+     {typ:'📍 Vytyčení', nazev:'202 16 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_16_Vytycovaci_schema.pdf'},
+     {typ:'📄 Výkres', nazev:'202 17 Postup vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_17_Postup vystavby.pdf'},
+     {typ:'📄 Výkres', nazev:'202 18 Vykopy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_18_Vykopy.pdf'},
+     {typ:'📄 Výkres', nazev:'202 19 SV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 202_Most pres vodotec/202_19_SV.pdf'}
+   ]},
+  {id:'SO 155', km:2.793, nazev:'Přeložka stezky pro pěší (km 2,793)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'155 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'155 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'155 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_01_Technicka zprava.pdf'},
+     {typ:'📄 Výkres', nazev:'155 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'155 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'155 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'155 06 1 propustek DN 1200', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_06_1_propustek DN 1200.pdf'},
+     {typ:'📄 Výkres', nazev:'155 06 2 propustek DN 1000', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_06_2_propustek DN 1000.pdf'},
+     {typ:'📄 Výkres', nazev:'155 07 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_155/155_07_Vyt_vyk.pdf'}
+   ]},
+  {id:'SO 112', km:2.940, nazev:'Propojovací rampa (km 2,940)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'112 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'112 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'112 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'112 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'112 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'112 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'112 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'112 06 Detail ostruvku', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_06_Detail_ostruvku.pdf'},
+     {typ:'📄 Výkres', nazev:'112 07-1 Propustek DN1000', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_07-1_Propustek_DN1000.pdf'},
+     {typ:'📄 Výkres', nazev:'112 07-2 Propustek DN600', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_07-2_Propustek_DN600.pdf'},
+     {typ:'📍 Vytyčení', nazev:'112 08 Vytyceni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_112/112_08_Vytyceni.pdf'}
    ]},
   {id:'SO 221', km:3.100, nazev:'Lávka pro cyklo a IS (km 3,100)',
    vykresy: [
-     {typ:'📑 Rozpiska', nazev:'00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_00_Seznam_priloh.pdf'},
-     {typ:'📄 Výkres', nazev:'00 Titul', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_00_Titul.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_01_TZ.pdf'},
-     {typ:'📐 Situace', nazev:'02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_02_Situace.pdf'},
-     {typ:'🗺️ Půdorys', nazev:'03 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_03_Pudorys.pdf'},
-     {typ:'📊 Pod. profil', nazev:'04 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_04_Podelny_rez.pdf'},
-     {typ:'✂️ Řezy', nazev:'05 Vzorovy rez NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_05_Vzorovy_rez_NK.pdf'},
-     {typ:'✂️ Řezy', nazev:'06 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_06_Pricne_rezy.pdf'},
-     {typ:'🔩 Tvar', nazev:'07 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_07_Tvar_pilot.pdf'},
-     {typ:'🔩 Tvar', nazev:'08 Tvar oper', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_08_Tvar_oper.pdf'},
-     {typ:'🔩 Tvar', nazev:'09 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_09_Tvar_NK.pdf'},
-     {typ:'🔩 Výztuž', nazev:'10 Schema vyztuze pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_10_Schema_vyztuze_pilot.pdf'},
-     {typ:'🔩 Výztuž', nazev:'11 Schema vyztuze oper a NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_11_Schema_vyztuze_oper_a_NK.pdf'},
-     {typ:'📄 Výkres', nazev:'12 Vykopy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_12_Vykopy_a_pazeni.pdf'},
-     {typ:'📍 Vytyčení', nazev:'13 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_13_Vytycovaci_schema.pdf'},
-     {typ:'📄 Výkres', nazev:'14 Schema vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_14_Schema_vystavby.pdf'},
-     {typ:'📄 Výkres', nazev:'15 SV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_15_SV.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'221 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_00_Seznam_priloh.pdf'},
+     {typ:'📑 Rozpiska', nazev:'221 00 Titul', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_00_Titul.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'221 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'221 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_02_Situace.pdf'},
+     {typ:'🗺️ Půdorys', nazev:'221 03 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_03_Pudorys.pdf'},
+     {typ:'📊 Pod. profil', nazev:'221 04 Podelny rez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_04_Podelny_rez.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'221 05 Vzorovy rez NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_05_Vzorovy_rez_NK.pdf'},
+     {typ:'✂️ Řezy', nazev:'221 06 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_06_Pricne_rezy.pdf'},
+     {typ:'🔩 Tvar', nazev:'221 07 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_07_Tvar_pilot.pdf'},
+     {typ:'🔩 Tvar', nazev:'221 08 Tvar oper', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_08_Tvar_oper.pdf'},
+     {typ:'🔩 Tvar', nazev:'221 09 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_09_Tvar_NK.pdf'},
+     {typ:'🔩 Výztuž', nazev:'221 10 Schema vyztuze pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_10_Schema_vyztuze_pilot.pdf'},
+     {typ:'🔩 Výztuž', nazev:'221 11 Schema vyztuze oper a NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_11_Schema_vyztuze_oper_a_NK.pdf'},
+     {typ:'📄 Výkres', nazev:'221 12 Vykopy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_12_Vykopy_a_pazeni.pdf'},
+     {typ:'📍 Vytyčení', nazev:'221 13 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_13_Vytycovaci_schema.pdf'},
+     {typ:'📄 Výkres', nazev:'221 14 Schema vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_14_Schema_vystavby.pdf'},
+     {typ:'📄 Výkres', nazev:'221 15 SV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 221_Lavka pro cyklo a IS v km 3,100/221_15_SV.pdf'}
+   ]},
+  {id:'SO 322', km:3.104, nazev:'Přeložka vodovodu PE160 (km 3,104)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'322 00 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_00_Desky.pdf'},
+     {typ:'📄 Výkres', nazev:'322 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_00_SP.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'322 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'322 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_02_Situace.pdf'},
+     {typ:'📊 Pod. profil', nazev:'322 03 Podelne profily', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_03_Podelne_profily.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'322 04 Vzorove ulozeni potrubi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_04_Vzorove_ulozeni_potrubi.pdf'},
+     {typ:'📄 Výkres', nazev:'322 05 Kladečské schéma', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_05_Kladečské_schéma.pdf'},
+     {typ:'📄 Výkres', nazev:'322 06 Armaturní šachty', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_06_Armaturní šachty.pdf'},
+     {typ:'📄 Výkres', nazev:'322 07 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_322_Přeložka_vodovodů_PE_160_v_km_3,104/322_07_VV.pdf'}
+   ]},
+  {id:'SO 312', km:3.105, nazev:'Přeložka kanalizace DN300 (km 3,105)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'312 00 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_00_Desky.pdf'},
+     {typ:'📄 Výkres', nazev:'312 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_00_SP.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'312 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'312 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'312 03 PP KAN', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_03_PP KAN.pdf'},
+     {typ:'📄 Výkres', nazev:'312 04 Vzor UP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_04_Vzor_UP.pdf'},
+     {typ:'📄 Výkres', nazev:'312 05 Vzor kan sach', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_05_Vzor_kan_sach.pdf'},
+     {typ:'📄 Výkres', nazev:'312 06 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_312_Přeložka_kanalizace_DN_300_v_km_3,105/312_06_VV.pdf'}
+   ]},
+  {id:'SO 156', km:3.105, nazev:'Přeložka stezky pro pěší a cyklisty (km 3,105)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'156 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'156 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'156 01 Technicka zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_01_Technicka zprava.pdf'},
+     {typ:'📐 Situace', nazev:'156 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'156 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'156 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'156 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'156 06 Vyt Vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_156/156_06_Vyt_Vyk.pdf'}
    ]},
   {id:'SO 222', km:3.114, nazev:'Nadjezd na III/1372 (km 3,114)',
    vykresy: [
-     {typ:'📑 Rozpiska', nazev:'000 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_000_Desky.pdf'},
-     {typ:'📑 Rozpiska', nazev:'000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_000_Seznam priloh.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'001 Technická zpráva', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_001_Technická zpráva.pdf'},
-     {typ:'📐 Situace', nazev:'002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_002_Situace.pdf'},
-     {typ:'📄 Výkres', nazev:'003 Půdorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_003_Půdorys.pdf'},
-     {typ:'📄 Výkres', nazev:'004 Podélný řez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_004_Podélný řez.pdf'},
-     {typ:'📄 Výkres', nazev:'005 Vzorový příčný řez NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_005_Vzorový příčný řez NK.pdf'},
-     {typ:'📄 Výkres', nazev:'006 Příčné řezy opěr', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_006_Příčné řezy opěr.pdf'},
-     {typ:'🔩 Tvar', nazev:'007 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_007_Tvar pilot.pdf'},
-     {typ:'🔩 Tvar', nazev:'008 Tvar spodní stavby O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_008_Tvar spodní stavby O1.pdf'},
-     {typ:'🔩 Tvar', nazev:'009 Tvar spodní stavby O4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_009_Tvar spodní stavby O4.pdf'},
-     {typ:'🔩 Tvar', nazev:'010 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_010_Tvar NK.pdf'},
-     {typ:'🔩 Tvar', nazev:'011 Tvar říms', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_011_Tvar říms.pdf'},
-     {typ:'📄 Výkres', nazev:'012 Schéma výztuže pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_012_Schéma výztuže pilot.pdf'},
-     {typ:'📄 Výkres', nazev:'013 Schéma výztuže spodní stavby NK a říms', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_013_Schéma výztuže spodní stavby_NK a říms.pdf'},
-     {typ:'📄 Výkres', nazev:'014 Vykopy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_014_Vykopy a pazeni.pdf'},
-     {typ:'📍 Vytyčení', nazev:'015 Vytyčovací schéma', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_015_Vytyčovací schéma.pdf'},
-     {typ:'📄 Výkres', nazev:'016 Schéma technologie výstavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_016_Schéma technologie výstavby.pdf'},
-     {typ:'📄 Výkres', nazev:'017 Statický výpočet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_017_Statický výpočet.pdf'},
+     {typ:'📑 Rozpiska', nazev:'222 000 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_000_Desky.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'222 000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_000_Seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'222 001 Technická zpráva', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_001_Technická zpráva.pdf'},
+     {typ:'📐 Situace', nazev:'222 002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_002_Situace.pdf'},
+     {typ:'🗺️ Půdorys', nazev:'222 003 Půdorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_003_Půdorys.pdf'},
+     {typ:'📊 Pod. profil', nazev:'222 004 Podélný řez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_004_Podélný řez.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'222 005 Vzorový příčný řez NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_005_Vzorový příčný řez NK.pdf'},
+     {typ:'✂️ Řezy', nazev:'222 006 Příčné řezy opěr', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_006_Příčné řezy opěr.pdf'},
+     {typ:'🔩 Tvar', nazev:'222 007 Tvar pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_007_Tvar pilot.pdf'},
+     {typ:'🔩 Tvar', nazev:'222 008 Tvar spodní stavby O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_008_Tvar spodní stavby O1.pdf'},
+     {typ:'🔩 Tvar', nazev:'222 009 Tvar spodní stavby O4', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_009_Tvar spodní stavby O4.pdf'},
+     {typ:'🔩 Tvar', nazev:'222 010 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_010_Tvar NK.pdf'},
+     {typ:'🔩 Tvar', nazev:'222 011 Tvar říms', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_011_Tvar říms.pdf'},
+     {typ:'🔩 Výztuž', nazev:'222 012 Schéma výztuže pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_012_Schéma výztuže pilot.pdf'},
+     {typ:'🔩 Výztuž', nazev:'222 013 Schéma výztuže spodní stavby NK a říms', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_013_Schéma výztuže spodní stavby_NK a říms.pdf'},
+     {typ:'📄 Výkres', nazev:'222 014 Vykopy a pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_014_Vykopy a pazeni.pdf'},
+     {typ:'📍 Vytyčení', nazev:'222 015 Vytyčovací schéma', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_015_Vytyčovací schéma.pdf'},
+     {typ:'📄 Výkres', nazev:'222 016 Schéma technologie výstavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_016_Schéma technologie výstavby.pdf'},
+     {typ:'📄 Výkres', nazev:'222 017 Statický výpočet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.3_Mosty, zdi/SO 222_Nadjezd na sil. III-1372 v km 3,114/222_017_Statický výpočet.pdf'}
+   ]},
+  {id:'SO 121', km:3.114, nazev:'Přeložka silnice III/1372 (km 3,114)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'121 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'121 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'121 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'121 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'121 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'121 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'121 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'121 06 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_121/121_06_Vyt_vyk.pdf'}
+   ]},
+  {id:'SO 321', km:3.148, nazev:'Provizorní přeložka vodovodu PE160 (km 3,148)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'321 00 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_00_Desky.pdf'},
+     {typ:'📄 Výkres', nazev:'321 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_00_SP.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'321 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'321 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_02_Situace.pdf'},
+     {typ:'📊 Pod. profil', nazev:'321 03 Podelny profil', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_03_Podelny_profil.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'321 04 Vzorove ulozeni potrubi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_04_Vzorove_ulozeni_potrubi.pdf'},
+     {typ:'📄 Výkres', nazev:'321 05 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_321_Provizorní_přeložka_vodovodů_PE_160_v_km_3,148/321_05_VV.pdf'}
+   ]},
+  {id:'SO 311', km:3.150, nazev:'Provizorní přeložka kanalizace DN300 (km 3,150)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'311 00 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_00_Desky.pdf'},
+     {typ:'📄 Výkres', nazev:'311 00 SP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_00_SP.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'311 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'311 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_02_Situace.pdf'},
+     {typ:'📊 Pod. profil', nazev:'311 03 Podelny profil', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_03_Podelny_profil.pdf'},
+     {typ:'📄 Výkres', nazev:'311 04 Vzor ulozeni potrubi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_04_Vzor_ulozeni_potrubi.pdf'},
+     {typ:'📄 Výkres', nazev:'311 05 Vzor kanalizacni sachta', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_05_Vzor_kanalizacni_sachta.pdf'},
+     {typ:'📄 Výkres', nazev:'311 06 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_311_Provizorní_přeložka_kanalizace_DN_300_v_km_3,150/311_06_VV.pdf'}
    ]},
   {id:'SO 651', km:3.228, nazev:'Most na dráze (km 3,228)',
    vykresy: [
-     {typ:'📑 Rozpiska', nazev:'000 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_000_Desky.pdf'},
-     {typ:'📑 Rozpiska', nazev:'000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_000_Seznam_priloh.pdf'},
-     {typ:'📋 Tech. zpráva', nazev:'001 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_001_TZ.pdf'},
-     {typ:'📐 Situace', nazev:'002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_002_Situace.pdf'},
-     {typ:'🗺️ Půdorys', nazev:'003 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_003_Pudorys.pdf'},
-     {typ:'📊 Pod. profil', nazev:'004 PodRez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_004_PodRez.pdf'},
-     {typ:'✂️ Řezy', nazev:'005 VzorPricRezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_005_VzorPricRezy.pdf'},
-     {typ:'✂️ Řezy', nazev:'006 PricRezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_006_PricRezy.pdf'},
-     {typ:'👁️ Pohledy', nazev:'007 Pohledy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_007_Pohledy.pdf'},
-     {typ:'🔩 Tvar', nazev:'008 Tvar Pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_008_Tvar_Pilot.pdf'},
-     {typ:'🔩 Tvar', nazev:'009 TVAR O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_009_TVAR_O1.pdf'},
-     {typ:'🔩 Tvar', nazev:'010 TVAR O2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_010_TVAR_O2.pdf'},
-     {typ:'🔩 Tvar', nazev:'011 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_011_Tvar_NK.pdf'},
-     {typ:'📄 Výkres', nazev:'012 Ocelove nosniky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_012_Ocelove_nosniky.pdf'},
-     {typ:'🔩 Výztuž', nazev:'013 Vyztuz pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_013_Vyztuz_pilot.pdf'},
-     {typ:'🔩 Výztuž', nazev:'014 Schema Vyztuze', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_014_Schema_Vyztuze.pdf'},
-     {typ:'📍 Vytyčení', nazev:'015 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_015_Vytycovaci_schema.pdf'},
-     {typ:'📄 Výkres', nazev:'016 Schema technologie vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_016_Schema_technologie_vystavby.pdf'},
-     {typ:'📄 Výkres', nazev:'017 Vykopy pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_017_Vykopy_pazeni.pdf'},
-     {typ:'📄 Výkres', nazev:'018 SV komplet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_018_SV_komplet.pdf'},
+     {typ:'📑 Rozpiska', nazev:'651 000 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_000_Desky.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'651 000 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_000_Seznam_priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'651 001 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_001_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'651 002 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_002_Situace.pdf'},
+     {typ:'🗺️ Půdorys', nazev:'651 003 Pudorys', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_003_Pudorys.pdf'},
+     {typ:'📊 Pod. profil', nazev:'651 004 PodRez', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_004_PodRez.pdf'},
+     {typ:'✂️ Řezy', nazev:'651 005 VzorPricRezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_005_VzorPricRezy.pdf'},
+     {typ:'✂️ Řezy', nazev:'651 006 PricRezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_006_PricRezy.pdf'},
+     {typ:'📄 Výkres', nazev:'651 007 Pohledy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_007_Pohledy.pdf'},
+     {typ:'🔩 Tvar', nazev:'651 008 Tvar Pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_008_Tvar_Pilot.pdf'},
+     {typ:'🔩 Tvar', nazev:'651 009 TVAR O1', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_009_TVAR_O1.pdf'},
+     {typ:'🔩 Tvar', nazev:'651 010 TVAR O2', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_010_TVAR_O2.pdf'},
+     {typ:'🔩 Tvar', nazev:'651 011 Tvar NK', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_011_Tvar_NK.pdf'},
+     {typ:'📄 Výkres', nazev:'651 012 Ocelove nosniky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_012_Ocelove_nosniky.pdf'},
+     {typ:'🔩 Výztuž', nazev:'651 013 Vyztuz pilot', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_013_Vyztuz_pilot.pdf'},
+     {typ:'🔩 Výztuž', nazev:'651 014 Schema Vyztuze', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_014_Schema_Vyztuze.pdf'},
+     {typ:'📍 Vytyčení', nazev:'651 015 Vytycovaci schema', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_015_Vytycovaci_schema.pdf'},
+     {typ:'📄 Výkres', nazev:'651 016 Schema technologie vystavby', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_016_Schema_technologie_vystavby.pdf'},
+     {typ:'📄 Výkres', nazev:'651 017 Vykopy pazeni', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_017_Vykopy_pazeni.pdf'},
+     {typ:'📄 Výkres', nazev:'651 018 SV komplet', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.6 Objekty drah/SO_651_Most na draze v zkm 4,494 (km 3,228)/651_018_SV_komplet.pdf'}
+   ]},
+  {id:'SO 122', km:3.720, nazev:'Přeložka stávající II/137 (km 3,720)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'122 0 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_0_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'122 0 Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_0_Sezpril.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'122 1.-Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_1.-Technicka zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'122 2 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_2_Situace.R1.Published.pdf'},
+     {typ:'📊 Pod. profil', nazev:'122 3 Podelne profily', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_3_Podelne profily.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'122 4 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_4_Vzorove pricne rezy.R1.Published.pdf'},
+     {typ:'✂️ Řezy', nazev:'122 5.1 Pricne rezy v km 0,020 - 0,180', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_5.1_Pricne rezy v km 0,020 - 0,180.R1.Published.pdf'},
+     {typ:'✂️ Řezy', nazev:'122 5.2 Pricne rezy v km 0,200 - 0,300', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_5.2_Pricne rezy v km 0,200 - 0,300.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'122 6.1 Propustek', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_6.1_Propustek.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'122 6.2 Propustek pod sjezdem v km 0,088', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_6.2_Propustek pod sjezdem v km 0,088.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'122 7 Situace dopravniho znaceni', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 122.-Přeložka stávající silnice II_137 v km 3,720/122_7_Situace dopravniho znaceni.R1.Published.pdf'}
+   ]},
+  {id:'SO 171', km:3.720, nazev:'Provizorní napojení II/137 (km 3,720)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'171 0 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_0_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'171 0 Sezpril', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_0_Sezpril.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'171 1.-Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_1.-Technicka zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'171 2 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_2_Situace.R1.Published.pdf'},
+     {typ:'📊 Pod. profil', nazev:'171 3 Podelne profily', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_3_Podelne profily.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'171 4 Vzorove pricne rezy', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_4_Vzorove pricne rezy.R1.Published.pdf'},
+     {typ:'✂️ Řezy', nazev:'171 5 Pricne rezy', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_5_Pricne rezy.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'171 6 Propustek', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 171.-Provizorní napojení silnice II_137 v km 3,720/171_6_Propustek.R1.Published.pdf'}
+   ]},
+  {id:'SO 362', km:3.754, nazev:'Přeložka hlavníku meliorace DN300 (km 3,754)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'362 00 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_00_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'362 00 Seznam priloh', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_00_Seznam_priloh.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'362 01 Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_01_Technicka_zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'362 02 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_02_Situace.R1.Published.pdf'},
+     {typ:'📊 Pod. profil', nazev:'362 03 Podelny profil', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_03_Podelny_profil.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'362 04 Vzorove ulozeni potrubi', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_04_Vzorove_ulozeni_potrubi.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'362 05 Vzorova revizni sachta', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_05_Vzorova_revizni_sachta.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'362 06 Vypis sachet', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 362.- Přeložka hlavníku meliorace DN 300 v km 3,754/362_06_Vypis_sachet.R1.Published.pdf'}
+   ]},
+  {id:'SO 313', km:3.756, nazev:'Přeložka kanalizace DN500 (km 3,756)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'313 00 Desky', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_00_Desky.R1.Published.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'313 00 Seznam priloh', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_00_Seznam_priloh.R1.Published.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'313 01 Technicka zprava', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_01_Technicka_zprava.R1.Published.pdf'},
+     {typ:'📐 Situace', nazev:'313 02 Situace', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_02_Situace.R1.Published.pdf'},
+     {typ:'📊 Pod. profil', nazev:'313 03 Podelny profil', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_03_Podelny_profil.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'313 04 Vzorove ulozeni potrubi', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_04_Vzorove_ulozeni_potrubi.R1.Published.pdf'},
+     {typ:'✂️ Vzor. řezy', nazev:'313 05 Vzorova revizni sachta', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_05_Vzorova_revizni_sachta.R1.Published.pdf'},
+     {typ:'📄 Výkres', nazev:'313 06 Vypis sachet', soubor:PDF_BASE+'PDPS křižovatka Slapy/D.-Dokumentace objektů/SO 313.-Přeložka kanalizace DN 500 v km 3,756/313_06_Vypis_sachet.R1.Published.pdf'}
    ]},
 ];
 var PROPUSTEK_TZ = '';
 
 // DOPLŇKOVÉ SO - další stavební objekty (000=demolice, 300=IS, 400=VO, 500=plynovod)
 // kmShift = posun po ose silnice (m), perpOffset = posun kolmo k ose (px)
-// → kombinace rozprostře markery hezky kolem propustků a podél osy
+// → kombinace rozprostře markery hezky kolem objektů a podél osy
 var DOPLNKY_SO = [];
 
 // NN NADZEMNÍ VEDENÍ - křížení s osou silnice (značka ⚡, popup "NN nadzemní")
@@ -2601,7 +2815,7 @@ var gpsActive = false;
 var gpsCentering = false;
 var gpxCumulative = [];
 var calibSorted = null;
-var layerGroups = {trasa:null, st100:null, st100sub:null, st20:null, st20sub:null, soSub:null, pr:null, propustky:null, prikopy:null, etapy:null, etapa1:null, etapa2:null, etapa3:null, etapa4:null, so:null, so101_1:null, so101_2:null, so101_3:null, sanace:null, notes:null, notes0:null, notes1:null, notes2:null, notes3:null, notes4:null, notes5:null, notes6:null, mereni:null, drone:null, pano:null, sondy:null};
+var layerGroups = {trasa:null, st100:null, st100sub:null, st20:null, st20sub:null, soSub:null, pr:null, objektySO:null, prikopy:null, etapy:null, etapa1:null, etapa2:null, etapa3:null, etapa4:null, so:null, so101_1:null, so101_2:null, so101_3:null, sanace:null, notes:null, notes0:null, notes1:null, notes2:null, notes3:null, notes4:null, notes5:null, notes6:null, mereni:null, drone:null, pano:null, sondy:null};
 
 // ── MATH ──────────────────────────────
 function haversine(lat1,lon1,lat2,lon2) {
@@ -2728,7 +2942,7 @@ function initMap() {
 
   // Při touch na PDF/prop panelu - vypni Leaflet aby nepřebíral pinch-zoom
   setTimeout(function() {
-    ['pdf-panel','prop-panel'].forEach(function(id) {
+    ['pdf-panel','objekt-panel'].forEach(function(id) {
       var el = document.getElementById(id);
       if(!el) return;
       el.addEventListener('touchstart', function(){ disableMapForPdf(true);  }, {passive:true});
@@ -3103,7 +3317,7 @@ function openVykresUpload(realKm, preferSO){
     document.getElementById('vyk-km-od').value = '';
     document.getElementById('vyk-km-do').value = '';
   }
-  // preferSO má přednost (klik z konkrétního SO objektu/propustku)
+  // preferSO má přednost (klik z konkrétního SO objektu)
   if(preferSO && folders.indexOf(preferSO)!==-1) soSel.value = preferSO;
   document.getElementById('vyk-nazev').value = '';
   document.getElementById('vyk-file').value = '';
@@ -3277,7 +3491,7 @@ function submitVykresUpload(){
         document.getElementById('vyk-nazev').value='';
         renderVykresList();
         // Obnov panely pod modalem, ať se nový výkres objeví hned (bez znovuotevření objektu)
-        try { if(typeof rebuildPropPanel==='function') rebuildPropPanel(); } catch(e){}
+        try { if(typeof rebuildObjektPanel==='function') rebuildObjektPanel(); } catch(e){}
         try { if(typeof rebuildDocPanel==='function') rebuildDocPanel(); } catch(e){}
       }).catch(function(e){
         status.textContent='⚠️ Nahráno do Storage, ale zápis odkazu selhal: '+(e&&e.message||'');
@@ -3338,7 +3552,7 @@ var _soDrawings = null, _soSegments = null;
 function _ensureSoIndex(){
   if(_soDrawings) return;
   _soDrawings = {}; _soSegments = {};
-  var seen = {};   // {so: {soubor:1}} – ať se výkres nezdvojí (např. situace propustku je v DOCS i v PROPUSTKY)
+  var seen = {};   // {so: {soubor:1}} – ať se výkres nezdvojí (např. situace propustku je v DOCS i v BODOVE_SO)
   function add(so, typ, nazev, soubor){
     if(!so || !soubor) return;
     seen[so] = seen[so] || {};
@@ -3349,11 +3563,17 @@ function _ensureSoIndex(){
   _docCats().forEach(function(c){
     (c.arr||[]).forEach(function(d){ add(soOfSoubor(d.soubor), c.typ, d.nazev, d.soubor); });
   });
-  // Propustky (SO 104/105) drží kompletní sadu jen tady → doplň, co v DOCS chybí (vzor/char/nový stav)
-  if(typeof PROPUSTKY !== 'undefined'){
-    PROPUSTKY.forEach(function(p){
+  // Bodové SO (mosty/lávka/nadjezd/IS) drží kompletní sadu výkresů zde → doplň, co v DOCS chybí
+  if(typeof BODOVE_SO !== 'undefined'){
+    BODOVE_SO.forEach(function(p){
       (p.vykresy||[]).forEach(function(v){ add(soOfSoubor(v.soubor), v.typ, v.nazev, v.soubor); });
     });
+  }
+  // SO 101 = hlavní silnice, je na CELÉ trase → přidej všechny její výkresy a segment 0–KM_END,
+  // aby se u každého staničení ukázaly (uživatel: „to je SO 101, musí tam být všechny").
+  if(typeof SO101_VYKRESY!=='undefined'){
+    SO101_VYKRESY.forEach(function(d){ add('101', d.typ, d.nazev, d.soubor); });
+    (_soSegments['101'] = _soSegments['101'] || []).push([ (typeof KM_START==='number'?KM_START:0), (typeof KM_END==='number'?KM_END:99) ]);
   }
   // „Kde je objekt aktivní" = km-okna jeho SITUACÍ → podle nich se z km určuje SO.
   (typeof DOCS_SITUACE!=='undefined'?DOCS_SITUACE:[]).forEach(function(d){
@@ -3418,10 +3638,10 @@ function rebuildDocPanel(){
   var panel = document.getElementById('pdf-panel');
   if(window._docPanelKm != null && panel && panel.classList.contains('open')) openStaniceniPanel(window._docPanelKm);
 }
-// Překresli otevřený panel objektu/propustku (po nahrání či změně platnosti výkresu)
-function rebuildPropPanel(){
-  var panel = document.getElementById('prop-panel');
-  if(panel && panel.classList.contains('open') && window._currentProp) openPropPanel(window._currentProp);
+// Překresli otevřený panel objektu (po nahrání či změně platnosti výkresu)
+function rebuildObjektPanel(){
+  var panel = document.getElementById('objekt-panel');
+  if(panel && panel.classList.contains('open') && window._currentObjekt) openObjektPanel(window._currentObjekt);
 }
 // Tlačítko 🗄️/♻️ v panelu – zneplatní/obnoví PRÁVĚ ZOBRAZENÝ výkres (statický i nahraný)
 function toggleInvalidateCurrentDoc(){
@@ -3599,11 +3819,11 @@ function pdfZoom(dir) {
   window._pdfZoom = levels[cur];
   // Re-render aktuálně otevřeného PDF (staničení nebo propustek)
   var pdfPanelOpen  = document.getElementById('pdf-panel');
-  var propPanelOpen = document.getElementById('prop-panel');
+  var propPanelOpen = document.getElementById('objekt-panel');
   if(pdfPanelOpen && pdfPanelOpen.classList.contains('open') && currentPdfSrc) {
     renderPdfOnCanvas(currentPdfSrc);
-  } else if(propPanelOpen && propPanelOpen.classList.contains('open') && typeof currentPropSrc !== 'undefined' && currentPropSrc) {
-    renderPropPdfOnCanvas(currentPropSrc);
+  } else if(propPanelOpen && propPanelOpen.classList.contains('open') && typeof currentObjektSrc !== 'undefined' && currentObjektSrc) {
+    renderObjektPdfOnCanvas(currentObjektSrc);
   }
   showToast('🔍 Zoom ' + Math.round(window._pdfZoom * 100) + '%', 1000);
 }
@@ -3931,7 +4151,7 @@ function init() {
   buildSOSub();
   if(ETAPY.length) buildEtapy();
   if(CISTENI_PRIKOPY.vpravo.length || CISTENI_PRIKOPY.vlevo.length) buildPrikopy();
-  buildPropustky();
+  buildBodoveSO();
   buildDoplnky();
   buildVedeniNN();
   map.fitBounds(L.latLngBounds(GPX_POINTS.map(function(p){return[p[0],p[1]];})),{padding:[40,40]});
@@ -3952,7 +4172,7 @@ function init() {
   resolveFileUrl('overlay/situace_lines.json').then(function(u){ return fetch(u, {method:'HEAD'}).then(function(r){ return r.ok; }).catch(function(){ return true; }); }).then(function(ok){ if(ok){ var s=document.getElementById('situace-section'); if(s) s.style.display='block'; } });
   initLongPress();
   // Zastavit touch eventy z panelů aby nešly do Leaflet mapy
-  ['pdf-panel','prop-panel'].forEach(function(id) {
+  ['pdf-panel','objekt-panel'].forEach(function(id) {
     var el = document.getElementById(id);
     if(!el) return;
     el.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:false});
@@ -4008,7 +4228,7 @@ var notesData      = [];
 var notesLayer     = null;
 var selectedNoteMarker = null;   // aktuálně vybraný marker
 var selectedNoteArrow  = null;   // šipka nad vybraným markerem
-var selectedRingMarker = null;    // obecný pulzující kroužek (propustky, PŘ, staničení)
+var selectedRingMarker = null;    // obecný pulzující kroužek (objektySO, PŘ, staničení)
 var newNoteLat   = null;
 var newNoteLng   = null;
 var newNoteCat   = 0;
@@ -4195,7 +4415,7 @@ function _addWindowCloseButtons(){
     ['task-detail',          function(){ closeTaskDetail(); }],
     ['photo-prompt-modal',   function(){ if(typeof ppAnswer==='function') ppAnswer(false); }],
     ['dl-stamp-modal',       function(){ if(typeof _resolveStampChoice==='function') _resolveStampChoice(null); }],
-    ['prop-edit-modal',      function(){ closePropEdit(); }],
+    ['objekt-edit-modal',      function(){ closePropEdit(); }],
     ['diary-filter-modal',   function(){ closeDiaryFilter(); }],
     ['diary-export-modal',   function(){ closeDiaryExport(); }],
     ['firmy-modal',          function(){ closeFirmyModal(); }],
@@ -4337,7 +4557,7 @@ function selectNoteMarker(marker, noteId) {
 
 function updateArrowPosition() {}
 
-// ── Pulzující kroužek výběru (propustky, PŘ, staničení) ──────────
+// ── Pulzující kroužek výběru (objektySO, PŘ, staničení) ──────────
 function showSelectionRing(latlng) {
   clearSelectionRing();
   var ringIcon = L.divIcon({
@@ -8399,7 +8619,42 @@ var SANACE = [];
 // ═══════════════════════════════════
 //  STAVEBNÍ OBJEKTY SO 101 - SO 107 (Sulice - Želivec)
 // ═══════════════════════════════════
-var STAVEBNI_OBJEKTY = [];
+var STAVEBNI_OBJEKTY = [
+  {id:'SO 153', kmOd:1.137, kmDo:1.562, barva:'#16a085', nazev:'Přeložka polní cesty (km 1,137–1,562)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'153 00 desky rozpiska', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_00_desky_rozpiska.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'153 00 seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_00_seznam priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'153 01 Technicky zprava', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_01_Technicky zprava.pdf'},
+     {typ:'📐 Situace', nazev:'153 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'153 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'153 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_04_VPR.pdf'},
+     {typ:'📄 Výkres', nazev:'153 05 PR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_05_PR.pdf'},
+     {typ:'📄 Výkres', nazev:'153 06 Vyt vyk', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.2_Pozemní komunikace/SO_153/153_06_Vyt_vyk.pdf'}
+   ]},
+  {id:'SO 351', kmOd:1.710, kmDo:2.051, barva:'#8e44ad', nazev:'Přeložka toku (km 1,710–2,051)',
+   vykresy: [
+     {typ:'📑 Rozpiska', nazev:'351 00 Desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_00_Desky.pdf'},
+     {typ:'📑 Seznam příloh', nazev:'351 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_00_Seznam_priloh.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'351 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'351 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'351 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_03_PP.pdf'},
+     {typ:'📄 Výkres', nazev:'351 04 VPR', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_04_VPR.pdf'},
+     {typ:'✂️ Řezy', nazev:'351 05 Pricne rezy', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_05_Pricne_rezy.pdf'},
+     {typ:'📄 Výkres', nazev:'351 06 Vtokovy objekt HOZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_06_Vtokovy_objekt_HOZ.pdf'},
+     {typ:'📄 Výkres', nazev:'351 07 VV', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_351_Přeložka_toku_v_km_1,710_–_2,051/351_07_VV.pdf'}
+   ]},
+  {id:'SO 352', kmOd:2.467, kmDo:2.809, barva:'#2980b9', nazev:'Přeložka zatrub. toku (km 2,467–2,809)',
+   vykresy: [
+     {typ:'📑 Seznam příloh', nazev:'352 00 Seznam priloh', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_00_Seznam_priloh.pdf'},
+     {typ:'📑 Rozpiska', nazev:'352 00 desky', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_00_desky.pdf'},
+     {typ:'📋 Tech. zpráva', nazev:'352 01 TZ', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_01_TZ.pdf'},
+     {typ:'📐 Situace', nazev:'352 02 Situace', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_02_Situace.pdf'},
+     {typ:'📄 Výkres', nazev:'352 03 PP', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_03_PP.pdf'},
+     {typ:'✂️ Řezy', nazev:'352 04 Vzor rez ul potrubi', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_04_Vzor_rez_ul_potrubi.pdf'},
+     {typ:'📄 Výkres', nazev:'352 05 Vzor kanal sachta', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_05_Vzor_kanal_sachta.pdf'},
+     {typ:'📄 Výkres', nazev:'352 06 Vykaz vymer', soubor:PDF_BASE+'PDPS přeložka Slapy/D_Dokumentace objektu/D.1.4_Vodohosp.objekty/SO_352_Přeložka_a_úprava_zatrubněného_toku_v_km_2,467_–_2,809/352_06_Vykaz_vymer.pdf'}
+   ]},
+];
 
 // ═══════════════════════════════════
 //  ETAPY VÝSTAVBY - prázdné (přijdou s realizační dokumentací)
@@ -8411,13 +8666,13 @@ var ETAPY = [];
 // ═══════════════════════════════════
 var CISTENI_PRIKOPY = { vpravo: [], vlevo: [] };
 // ═══════════════════════════════════
-//  PROPUSTKY
+//  BODOVE_SO
 // ═══════════════════════════════════
-var propLayer = null;
-var currentPropId = null;
-var currentPropSrc = '';
-var propPages = [];
-var propPageIdx = 0;
+var objektLayer = null;
+var currentObjektId = null;
+var currentObjektSrc = '';
+var objektPages = [];
+var objektPageIdx = 0;
 
 
 
@@ -8521,12 +8776,14 @@ function buildSO() {
     }
     if(pts.length < 2) return;
 
-    var line = L.polyline(pts, {color:so.barva, weight:7, opacity:0.55});
-    line.bindPopup(
-      '<b>' + so.id + '</b> // Oprava silnice I/3' +
-      '<br>km <b>' + fmtKm(so.kmOd) + ' – ' + fmtKm(so.kmDo) + '</b>',
-      {className:'so-tooltip', maxWidth:240}
-    );
+    var line = L.polyline(pts, {color:so.barva, weight:8, opacity:0.6});
+    var _mid=(so.kmOd+so.kmDo)/2;
+    if(so.vykresy && so.vykresy.length){
+      (function(soo,mid){ line.on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(Object.assign({km:mid}, soo)); }); })(so,_mid);
+      line.bindTooltip((so.nazev||so.id)+' · klepni na výkresy', {sticky:true, className:'so-tooltip'});
+    } else {
+      line.bindPopup('<b>'+so.id+'</b><br>'+(so.nazev||'')+'<br>km <b>'+fmtKm(so.kmOd)+' – '+fmtKm(so.kmDo)+'</b>', {className:'so-tooltip', maxWidth:240});
+    }
     line.addTo(subGroup);
 
     var step = 20;
@@ -8714,7 +8971,7 @@ function buildDoplnky() {
       '<div class="doplnek-pin cat-' + d.kat + '" style="font-size:9px;">' + label + '</div></div>';
     var icon = L.divIcon({className:'doplnek-marker', html:html, iconSize:[DW,DH], iconAnchor:[ancX,ancY]});
     var m = L.marker(pos, {icon:icon, interactive:true, zIndexOffset:180});
-    (function(dop){ m.on('click', function(e){ L.DomEvent.stopPropagation(e); openPropPanel(dop); }); })(d);
+    (function(dop){ m.on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(dop); }); })(d);
     m.addTo(doplnkyLayer);
   });
 }
@@ -8742,20 +8999,27 @@ function buildVedeniNN() {
   });
 }
 
-function buildPropustky() {
-  propLayer = L.layerGroup().addTo(map);
-  layerGroups.propustky = propLayer;
+function buildBodoveSO() {
+  objektLayer = L.layerGroup().addTo(map);
+  layerGroups.objektySO = objektLayer;
 
-  PROPUSTKY.forEach(function(p) {
+  // Seřaď dle km a spočítej „shluky" blízkých objektů → rozprostři je do vějíře, ať se markery nekryjí.
+  var _sorted = BODOVE_SO.map(function(p,i){return {p:p,i:i};}).filter(function(o){return typeof o.p.km==='number';});
+  _sorted.sort(function(a,b){return a.p.km-b.p.km;});
+  var _stagger = {}; var _run=0;
+  for(var _si=0; _si<_sorted.length; _si++){
+    if(_si>0 && Math.abs(_sorted[_si].p.km-_sorted[_si-1].p.km) < 0.060) _run++; else _run=0;
+    _stagger[_sorted[_si].p.id] = _run;   // pořadí v rámci shluku
+  }
+  BODOVE_SO.forEach(function(p) {
     var pos = realKmToLatLng(p.km);
     if(!pos) return;
     var gpxM = interp(calibSorted,'realKm','gpxM', p.km);
     var bear = bearingAtGpxM(gpxM);
 
-    // Marker na PRAVÉ straně osy (stejně jako PŘ), ale níže (offset větší)
-    // Aby se nekryly s PŘ markery použijeme offset doleva (opačná strana)
+    // Marker vlevo od osy; blízké objekty odsadíme dál (vějíř), ať se nepřekrývají.
     var perpRad = (bear - 90) * Math.PI / 180; // vlevo od osy
-    var offset = 48;
+    var offset = 48 + (_stagger[p.id]||0) * 30;
     var dx = Math.sin(perpRad) * offset;
     var dy = -Math.cos(perpRad) * offset;
     var DW = 60, DH = 34;
@@ -8763,51 +9027,51 @@ function buildPropustky() {
     var ancY = Math.round(DH/2 + dy);
 
     var html = '<div style="width:'+DW+'px;height:'+DH+'px;display:flex;align-items:center;justify-content:flex-end;pointer-events:all;cursor:pointer;">'+
-      '<div class="prop-pin">'+p.id+'</div></div>';
-    var icon = L.divIcon({className:'prop-marker', html:html, iconSize:[DW,DH], iconAnchor:[ancX,ancY]});
+      '<div class="objekt-pin">'+p.id+'</div></div>';
+    var icon = L.divIcon({className:'objekt-marker', html:html, iconSize:[DW,DH], iconAnchor:[ancX,ancY]});
     var m = L.marker(pos, {icon:icon, interactive:true, zIndexOffset:200});
-    (function(prop){ m.on('click', function(e){ L.DomEvent.stopPropagation(e); openPropPanel(prop); }); })(p);
-    m.addTo(propLayer);
+    (function(prop){ m.on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(prop); }); })(p);
+    m.addTo(objektLayer);
   });
 }
 
-function openPropPanel(prop) {
+function openObjektPanel(prop) {
   if(!hasPerm('pdf')){ showToast('📄 Prohlížení výkresů Ti admin nepovolil', 3000); return; }
   var pPos = realKmToLatLng(prop.km); if(pPos) showSelectionRing(L.latLng(pPos[0],pPos[1]));
-  currentPropId = prop.id;
-  window._currentProp = prop;   // pro rebuildPropPanel() po nahrání výkresu
-  // Sulice: každý propustek má pole 'vykresy' s kompletní sadou (situace, PP, vzor.řezy, ...)
-  // Fallback (Votice-style): pokud je definován jen 'soubor' + 'tz', sestav minimální pole
+  currentObjektId = prop.id;
+  window._currentObjekt = prop;   // pro rebuildObjektPanel() po nahrání výkresu
+  // Každý bodový objekt má pole 'vykresy' s kompletní sadou (situace, PP, vzor. řezy, ...)
+  // Fallback: pokud je definován jen 'soubor' + 'tz', sestav minimální pole
   if(prop.vykresy && prop.vykresy.length) {
-    propPages = prop.vykresy.slice();
+    objektPages = prop.vykresy.slice();
   } else {
-    propPages = [
+    objektPages = [
       {soubor: prop.soubor, nazev: prop.nazev, typ: '📐 Situace'},
     ];
     if(prop.tz) {
-      propPages.push({soubor: prop.tz, nazev: 'Tech. zpráva (' + prop.id + ')', typ: '📋 Tech. zpráva'});
+      objektPages.push({soubor: prop.tz, nazev: 'Tech. zpráva (' + prop.id + ')', typ: '📋 Tech. zpráva'});
     } else if(PROPUSTEK_TZ) {
-      propPages.push({soubor: PROPUSTEK_TZ, nazev: 'Společná TZ propustků', typ: '📋 Tech. zpráva'});
+      objektPages.push({soubor: PROPUSTEK_TZ, nazev: 'Společná TZ propustků', typ: '📋 Tech. zpráva'});
     }
   }
-  // Aktualizuj globální currentPropSrc pro tlačítko 'Otevřít externě'
-  currentPropSrc = propPages[0].soubor;
-  propPageIdx = 0;
+  // Aktualizuj globální currentObjektSrc pro tlačítko 'Otevřít externě'
+  currentObjektSrc = objektPages[0].soubor;
+  objektPageIdx = 0;
 
   // Zapamatuj km + SO objektu pro tlačítko ➕ (nahrání výkresu k tomuto SO).
   // SO odvodíme z cesty statického výkresu (SO_443/…) NEBO z id objektu ('SO 443' → 'SO_443').
   window._propPanelKm = (typeof prop.km==='number') ? prop.km : null;
-  var _soM = String((propPages[0] && propPages[0].soubor) || prop.soubor || '').match(/(SO_[0-9]+)\//);
+  var _soM = String((objektPages[0] && objektPages[0].soubor) || prop.soubor || '').match(/(SO_[0-9]+)\//);
   var _soFromId = String(prop.id||'').trim().replace(/\s+/g,'_');   // 'SO 443' → 'SO_443'
   window._propPanelSO = _soM ? _soM[1] : (/^SO_\d+/i.test(_soFromId) ? _soFromId : null);
 
   // Připojit UŽIVATELSKÉ výkresy nahrané PŘÍMO k tomuto objektu. Bez toho by se výkres přidaný přes ➕
-  // v panelu objektu nikde nezobrazil – prop-panel jinak čte jen statické prop.vykresy.
+  // v panelu objektu nikde nezobrazil – objekt-panel jinak čte jen statické prop.vykresy.
   // Vazba: má-li objekt SO → párujeme JEN podle SO (přesné, neprosakuje do sousedních objektů na stejném km).
   //        nemá-li SO → fallback podle km objektu.
   try {
     var _seenSb = {};
-    propPages.forEach(function(pp){ if(pp && pp.soubor) _seenSb[pp.soubor] = true; });
+    objektPages.forEach(function(pp){ if(pp && pp.soubor) _seenSb[pp.soubor] = true; });
     (vykresyData || []).forEach(function(d){
       if(!d || d.neplatny || !d.soubor || _seenSb[d.soubor]) return;
       var match;
@@ -8819,14 +9083,14 @@ function openPropPanel(prop) {
                  && window._propPanelKm >= od && window._propPanelKm <= doKm);
       }
       if(match){
-        propPages.push({ soubor:d.soubor, nazev:(d.nazev||'Výkres'), typ:(d.kat||'📎 Výkres') });
+        objektPages.push({ soubor:d.soubor, nazev:(d.nazev||'Výkres'), typ:(d.kat||'📎 Výkres') });
         _seenSb[d.soubor] = true;
       }
     });
   } catch(e){ console.warn('prop user výkresy:', e); }
 
-  var panel = document.getElementById('prop-panel');
-  var title = document.getElementById('prop-title');
+  var panel = document.getElementById('objekt-panel');
+  var title = document.getElementById('objekt-title');
   panel.classList.add('open');
   title.textContent = prop.nazev;
 
@@ -8834,39 +9098,39 @@ function openPropPanel(prop) {
   unlockViewport();
 
   // Záložky
-  var tabs = document.getElementById('prop-tabs');
+  var tabs = document.getElementById('objekt-tabs');
   tabs.innerHTML = '';
-  propPages.forEach(function(p, i) {
+  objektPages.forEach(function(p, i) {
     var btn = document.createElement('button');
     btn.className = 'pdf-tab' + (i===0?' active':'');
     btn.textContent = p.typ;
     btn.onclick = (function(idx){ return function(){
-      renderPropPage(idx);
+      renderObjektPage(idx);
     };})(i);
     tabs.appendChild(btn);
   });
 
-  // Zobraz PDF v prop-content iframe
-  renderPropPage(0);
+  // Zobraz PDF v objekt-content iframe
+  renderObjektPage(0);
 
-  // Načíst poznámky propustku
+  // Načíst poznámky objektu
   loadPropNotes(prop.id);
 }
 
-function renderPropPage(idx) {
-  propPageIdx = idx;
-  var p = propPages[idx];
-  currentPropSrc = p.soubor;
-  document.querySelectorAll('#prop-tabs .pdf-tab').forEach(function(b,i){ b.classList.toggle('active',i===idx); });
-  var openWrap = document.getElementById('prop-open-wrap');
-  var frameEl  = document.getElementById('prop-iframe');
+function renderObjektPage(idx) {
+  objektPageIdx = idx;
+  var p = objektPages[idx];
+  currentObjektSrc = p.soubor;
+  document.querySelectorAll('#objekt-tabs .pdf-tab').forEach(function(b,i){ b.classList.toggle('active',i===idx); });
+  var openWrap = document.getElementById('objekt-open-wrap');
+  var frameEl  = document.getElementById('objekt-iframe');
   // Aktualizuj titulek a label
-  var title = document.getElementById('prop-title');
-  if(title) title.textContent = p.nazev || p.typ || 'Propustek';
+  var title = document.getElementById('objekt-title');
+  if(title) title.textContent = p.nazev || p.typ || 'Stavební objekt';
   // VŽDY iframe (jako Votice). Pro pinch-zoom otevři v Safari přes ↗.
-  var canvasWrap = document.getElementById('prop-canvas-wrap');
-  var propZoomIn  = document.getElementById('btn-prop-zoom-in');
-  var propZoomOut = document.getElementById('btn-prop-zoom-out');
+  var canvasWrap = document.getElementById('objekt-canvas-wrap');
+  var propZoomIn  = document.getElementById('btn-objekt-zoom-in');
+  var propZoomOut = document.getElementById('btn-objekt-zoom-out');
   if(canvasWrap) canvasWrap.style.display = 'none';
   if(openWrap)   openWrap.style.display   = 'none';
   if(frameEl)    { frameEl.style.display = 'flex'; setPdfFrameResolved(frameEl, p.soubor); }
@@ -8874,12 +9138,12 @@ function renderPropPage(idx) {
   if(propZoomOut) propZoomOut.style.display = 'none';
 }
 
-// PDF.js renderer pro panel propustků (analogicky k renderPdfOnCanvas)
-var _propPdfRenderToken = 0;
-function renderPropPdfOnCanvas(pdfUrl) {
-  var token = ++_propPdfRenderToken;
-  var container = document.getElementById('prop-canvas-container');
-  var status    = document.getElementById('prop-canvas-status');
+// PDF.js renderer pro panel bodového objektu
+var _objektPdfRenderToken = 0;
+function renderObjektPdfOnCanvas(pdfUrl) {
+  var token = ++_objektPdfRenderToken;
+  var container = document.getElementById('objekt-canvas-container');
+  var status    = document.getElementById('objekt-canvas-status');
   if(!container) return;
   container.innerHTML = '';
   if(status) status.textContent = '⏳ Načítám PDF...';
@@ -8892,17 +9156,17 @@ function renderPropPdfOnCanvas(pdfUrl) {
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   } catch(e){}
   resolveFileUrl(pdfUrl).then(function(_u){ return pdfjsLib.getDocument(_u).promise; }).then(function(pdf) {
-    if(token !== _propPdfRenderToken) return;
+    if(token !== _objektPdfRenderToken) return;
     var z = window._pdfZoom || 1.0;
     if(status) status.textContent = 'Stránek: ' + pdf.numPages + ' · Zoom ' + Math.round(z*100) + '%';
     var renderNext = function(pageNum) {
-      if(token !== _propPdfRenderToken) return;
+      if(token !== _objektPdfRenderToken) return;
       if(pageNum > pdf.numPages) {
         if(status) status.textContent = '✓ Hotovo · ' + pdf.numPages + ' str. · Zoom ' + Math.round(z*100) + '%';
         return;
       }
       pdf.getPage(pageNum).then(function(page) {
-        if(token !== _propPdfRenderToken) return;
+        if(token !== _objektPdfRenderToken) return;
         var maxW = container.clientWidth - 12 || 360;
         var v0 = page.getViewport({scale: 1});
         var dpr = (window.devicePixelRatio || 1);
@@ -8932,41 +9196,41 @@ function renderPropPdfOnCanvas(pdfUrl) {
 }
 
 function openPropPdfExternal() {
-  if(!currentPropSrc) return;
+  if(!currentObjektSrc) return;
   // V PWA na iOS: fullscreen interního panelu místo Safari (kvůli návratu zpět)
   if(isPWA() && isIOS()) {
-    var panel = document.getElementById('prop-panel');
+    var panel = document.getElementById('objekt-panel');
     if(panel) panel.classList.add('fullscreen');
     return;
   }
-  window.open(currentPropSrc,'_blank');
+  window.open(currentObjektSrc,'_blank');
 }
 
 
 function togglePropFs() {
-  var p = document.getElementById('prop-panel');
+  var p = document.getElementById('objekt-panel');
   p.classList.toggle('fullscreen');
   p.classList.contains('fullscreen') ? unlockViewport() : lockViewport();
 }
 function closePropPanel() {
-  document.getElementById('prop-panel').classList.remove('open','fullscreen');
-  document.getElementById('prop-note-form').classList.remove('open');
-  var fr = document.getElementById('prop-iframe');
+  document.getElementById('objekt-panel').classList.remove('open','fullscreen');
+  document.getElementById('objekt-note-form').classList.remove('open');
+  var fr = document.getElementById('objekt-iframe');
   if(fr) fr.src = 'about:blank';
-  currentPropId = null;
-  currentPropSrc = '';
+  currentObjektId = null;
+  currentObjektSrc = '';
   lockViewport();
 }
 
-// ── Poznámky propustku (Firebase) s foto a editací ──
+// ── Poznámky objektu (Firebase) s foto a editací ──
 var propNotePhotos = [];
 var propEditPhotos = [];
 var propEditKey = null;
 
 function loadPropNotes(propId) {
-  var list = document.getElementById('prop-notes-list');
+  var list = document.getElementById('objekt-notes-list');
   list.innerHTML = '<div style="color:var(--text2);font-size:11px;padding:4px;">Načítám...</div>';
-  db.ref('propustky/' + propId + '/poznamky').once('value', function(snap) {
+  db.ref('objektySO/' + propId + '/poznamky').once('value', function(snap) {
     list.innerHTML = '';
     var val = snap.val();
     if(!val) {
@@ -8976,23 +9240,23 @@ function loadPropNotes(propId) {
     Object.keys(val).forEach(function(key) {
       var n = val[key];
       var div = document.createElement('div');
-      div.className = 'prop-note-item';
+      div.className = 'objekt-note-item';
 
       // Meta
       var meta = document.createElement('div');
-      meta.className = 'prop-note-meta';
+      meta.className = 'objekt-note-meta';
       meta.textContent = '👤 ' + n.author + ' · ' + n.time;
 
       // Tlačítka editace a smazání
       var btnWrap = document.createElement('span');
       btnWrap.style.cssText = 'float:right;display:flex;gap:4px;';
       var editBtn = document.createElement('button');
-      editBtn.className = 'prop-note-del';
+      editBtn.className = 'objekt-note-del';
       editBtn.textContent = '✏️';
       editBtn.title = 'Editovat';
       (function(pid, k, note){ editBtn.onclick = function(){ openPropEdit(pid, k, note); }; })(propId, key, n);
       var delBtn = document.createElement('button');
-      delBtn.className = 'prop-note-del';
+      delBtn.className = 'objekt-note-del';
       delBtn.textContent = '✕';
       (function(pid, k){ delBtn.onclick = function(){ deletePropNote(pid, k); }; })(propId, key);
       btnWrap.appendChild(editBtn);
@@ -9001,7 +9265,7 @@ function loadPropNotes(propId) {
 
       // Text
       var txt = document.createElement('div');
-      txt.className = 'prop-note-text';
+      txt.className = 'objekt-note-text';
       txt.textContent = n.text;
 
       div.appendChild(meta);
@@ -9027,19 +9291,19 @@ function loadPropNotes(propId) {
 }
 
 function togglePropNoteForm() {
-  var form = document.getElementById('prop-note-form');
+  var form = document.getElementById('objekt-note-form');
   form.classList.toggle('open');
   if(form.classList.contains('open')) {
-    document.getElementById('prop-note-author').value = localStorage.getItem('noteAuthor') || '';
-    document.getElementById('prop-note-text').value = '';
+    document.getElementById('objekt-note-author').value = localStorage.getItem('noteAuthor') || '';
+    document.getElementById('objekt-note-text').value = '';
     propNotePhotos = [];
-    document.getElementById('prop-photo-preview').innerHTML = '';
+    document.getElementById('objekt-photo-preview').innerHTML = '';
   }
 }
 
 function addPropPhotos(input) {
   var files = Array.from(input.files);
-  var preview = document.getElementById('prop-photo-preview');
+  var preview = document.getElementById('objekt-photo-preview');
   files.forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -9056,9 +9320,9 @@ function addPropPhotos(input) {
 }
 
 function savePropNote() {
-  if(!currentPropId) return;
-  var author = document.getElementById('prop-note-author').value.trim();
-  var text   = document.getElementById('prop-note-text').value.trim();
+  if(!currentObjektId) return;
+  var author = document.getElementById('objekt-note-author').value.trim();
+  var text   = document.getElementById('objekt-note-text').value.trim();
   if(!author) { showToast('Zadejte jméno!', 2000); return; }
   if(!text)   { showToast('Zadejte text poznámky!', 2000); return; }
   localStorage.setItem('noteAuthor', author);
@@ -9067,8 +9331,8 @@ function savePropNote() {
   function finish(uploadedUrls) {
     var note = { author:author, text:text, time:new Date().toLocaleString('cs-CZ'), photos:keepUrls.concat(uploadedUrls) };
     var key = Date.now().toString();
-    db.ref('propustky/' + currentPropId + '/poznamky/' + key).set(note)
-      .then(function(){ showToast('✅ Uloženo', 1500); togglePropNoteForm(); loadPropNotes(currentPropId); })
+    db.ref('objektySO/' + currentObjektId + '/poznamky/' + key).set(note)
+      .then(function(){ showToast('✅ Uloženo', 1500); togglePropNoteForm(); loadPropNotes(currentObjektId); })
       .catch(function(){ showToast('❌ Chyba uložení', 2000); });
   }
   if(toUpload.length === 0) { finish([]); }
@@ -9082,7 +9346,7 @@ function savePropNote() {
 
 function deletePropNote(propId, key) {
   if(!confirm('Smazat tuto poznámku?')) return;
-  db.ref('propustky/' + propId + '/poznamky/' + key).remove()
+  db.ref('objektySO/' + propId + '/poznamky/' + key).remove()
     .then(function() {
       showToast('🗑️ Smazáno', 1500);
       loadPropNotes(propId);
@@ -9092,10 +9356,10 @@ function deletePropNote(propId, key) {
 function openPropEdit(propId, key, note) {
   propEditKey = key;
   propEditPhotos = (note.photos || []).slice();
-  document.getElementById('prop-edit-author').value = note.author || '';
-  document.getElementById('prop-edit-text').value = note.text || '';
+  document.getElementById('objekt-edit-author').value = note.author || '';
+  document.getElementById('objekt-edit-text').value = note.text || '';
   // Zobraz stávající fotky
-  var prev = document.getElementById('prop-edit-photo-preview');
+  var prev = document.getElementById('objekt-edit-photo-preview');
   prev.innerHTML = '';
   propEditPhotos.forEach(function(src, i) {
     var wrap = document.createElement('div');
@@ -9106,16 +9370,16 @@ function openPropEdit(propId, key, note) {
     var del = document.createElement('button');
     del.textContent = '✕';
     del.style.cssText = 'position:absolute;top:-4px;right:-4px;background:#e94560;color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;padding:0;';
-    (function(idx){ del.onclick = function(){ propEditPhotos.splice(idx,1); openPropEdit(propId, key, {author:document.getElementById('prop-edit-author').value, text:document.getElementById('prop-edit-text').value, photos:propEditPhotos}); }; })(i);
+    (function(idx){ del.onclick = function(){ propEditPhotos.splice(idx,1); openPropEdit(propId, key, {author:document.getElementById('objekt-edit-author').value, text:document.getElementById('objekt-edit-text').value, photos:propEditPhotos}); }; })(i);
     wrap.appendChild(img); wrap.appendChild(del);
     prev.appendChild(wrap);
   });
-  document.getElementById('prop-edit-modal').style.display = 'flex';
+  document.getElementById('objekt-edit-modal').style.display = 'flex';
 }
 
 function addPropEditPhotos(input) {
   var files = Array.from(input.files);
-  var prev = document.getElementById('prop-edit-photo-preview');
+  var prev = document.getElementById('objekt-edit-photo-preview');
   files.forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -9132,21 +9396,21 @@ function addPropEditPhotos(input) {
 }
 
 function savePropEdit() {
-  if(!currentPropId || !propEditKey) return;
-  var author = document.getElementById('prop-edit-author').value.trim();
-  var text   = document.getElementById('prop-edit-text').value.trim();
+  if(!currentObjektId || !propEditKey) return;
+  var author = document.getElementById('objekt-edit-author').value.trim();
+  var text   = document.getElementById('objekt-edit-text').value.trim();
   if(!author || !text) { showToast('Vyplňte jméno a text', 2000); return; }
   var toUpload = propEditPhotos.filter(function(s){ return s.startsWith('data:'); });
   var keepUrls = propEditPhotos.filter(function(s){ return !s.startsWith('data:'); });
   function doSave(uploadedUrls) {
-    db.ref('propustky/' + currentPropId + '/poznamky/' + propEditKey).update({
+    db.ref('objektySO/' + currentObjektId + '/poznamky/' + propEditKey).update({
       author: author, text: text,
       photos: keepUrls.concat(uploadedUrls),
       edited: new Date().toLocaleString('cs-CZ'),
     }).then(function() {
       showToast('✅ Uloženo', 1500);
       closePropEdit();
-      loadPropNotes(currentPropId);
+      loadPropNotes(currentObjektId);
     }).catch(function() { showToast('❌ Chyba uložení', 2000); });
   }
   if(toUpload.length === 0) { doSave([]); }
@@ -9159,7 +9423,7 @@ function savePropEdit() {
 }
 
 function closePropEdit() {
-  document.getElementById('prop-edit-modal').style.display = 'none';
+  document.getElementById('objekt-edit-modal').style.display = 'none';
   propEditKey = null;
 }
 
@@ -9231,7 +9495,7 @@ var gallerySort = 'date';     // 'date' = datum pořízení (nejnovější prvn�
 // Liniové objekty mají rozsah km (kmOd–kmDo, odvozeno z výkresů situací/profilů),
 // bodové doplňkové objekty (DOPLNKY_SO) mají jedno km. Při focení se podle staničení
 // najdou objekty v okolí ±50 m a uživatel vybere přesný SO.
-// Naplní se automaticky z SO_CATALOG + PROPUSTKY + DOPLNKY_SO (viz _buildSoObjekty() za SO_CATALOG).
+// Naplní se automaticky z SO_CATALOG + BODOVE_SO + DOPLNKY_SO (viz _buildSoObjekty() za SO_CATALOG).
 // (Dřív tu byl natvrdo katalog Sulic SO 101–107 – pozůstatek, odstraněn.)
 var SO_OBJEKTY = [];
 
@@ -9281,7 +9545,7 @@ var SO_CATALOG = [
 ];
 // Sestaví SO_OBJEKTY (proximity katalog pro focení) z Tábor dat – žádný ruční seznam.
 // km se čte z textu 'short' (např. „km 3,720" nebo rozsah „km 1,710–2,051"); hlavní
-// komunikace SO 101 dostane celou trasu; bodové objekty (PROPUSTKY) dostanou svoje km.
+// komunikace SO 101 dostane celou trasu; bodové objekty (BODOVE_SO) dostanou svoje km.
 (function _buildSoObjekty(){
   function parseKm(s){
     s = String(s||'').replace(/,/g,'.');
@@ -9300,7 +9564,7 @@ var SO_CATALOG = [
     if(km) out.push({ id:o.id, short:(o.short||''), kmOd:km.kmOd, kmDo:km.kmDo });
     // SO bez km v textu se nenabízí podle polohy, ale jsou ručně v celém SO_CATALOG.
   });
-  (typeof PROPUSTKY!=='undefined'?PROPUSTKY:[]).forEach(function(p){
+  (typeof BODOVE_SO!=='undefined'?BODOVE_SO:[]).forEach(function(p){
     if(!p || !p.id || typeof p.km!=='number') return;
     if(out.some(function(x){ return x.id===p.id; })) return;
     out.push({ id:p.id, short:(p.nazev||'').replace(/\s*\(km[^)]*\)\s*$/i,'').trim(), kmOd:p.km, kmDo:p.km });
@@ -10897,7 +11161,7 @@ var FEATURES = [
   { key:'fotomapa',   label:'🗺️ Vrstva: Fotky v mapě', btns:[] },      // ⚠ NIKDY pod 'galerie'
   { key:'katastr',    label:'🗺️ Vrstva: Katastr (KN)', btns:[] },
   { key:'trasa',      label:'🗺️ Vrstva: Trasa a staničení', btns:[] },
-  { key:'objekty',    label:'🗺️ Vrstva: SO objekty (propustky, doplňkové SO, voda/elektro)', btns:[] },
+  { key:'objekty',    label:'🗺️ Vrstva: SO objekty (objektySO, doplňkové SO, voda/elektro)', btns:[] },
   { key:'situace',    label:'🗺️ Vrstva: Koordinační situace (DWG)', btns:[] },
   { key:'orientace',  label:'🗺️ Vrstva: Orientační staničení/SO (pro subku)', btns:[] },
   { key:'pano',       label:'🗺️ Vrstva: 360° foto (procházka trasou)', btns:[] },
@@ -10907,12 +11171,12 @@ var FEATURES = [
 // Mapa vrstva → právo pro obecný toggleLayer(). Kde se id přepínače liší, viz LAYER_CB.
 var LAYER_PERM = {
   trasa:'trasa', st100:'trasa', st20:'trasa',
-  propustky:'objekty', doplnky:'objekty', so:'objekty',
+  objektySO:'objekty', doplnky:'objekty', so:'objekty',
   notes0:'pripominky', notes1:'pripominky', notes2:'pripominky', notes3:'pripominky',
   notes4:'pripominky', notes5:'pripominky', notes6:'pripominky',
   mereni:'mereni', zkousky:'zkousky', sondy:'sondy'
 };
-var LAYER_CB = { propustky:'lyr-prop' };   // id přepínače ≠ 'lyr-'+name
+var LAYER_CB = { objektySO:'lyr-objekt' };   // id přepínače ≠ 'lyr-'+name
 // Společný guard vrstvy: bez práva přepínač ODŠKRTNE a vrstvu nezapne (funguje i z konzole).
 function _layerPermGuard(perm, cbId, label){
   if(hasPerm(perm)) return true;
@@ -18997,63 +19261,63 @@ function copyDiaryExport(){
 </div>
 
 
-<!-- Propustek panel -->
-<div id="prop-panel" style="touch-action:pan-x pan-y pinch-zoom;">
-  <div id="prop-header">
-    <div id="prop-title">Propustek</div>
-    <button id="btn-prop-zoom-out" onclick="pdfZoom(-1)" title="Zmenšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">−</button>
-    <button id="btn-prop-zoom-in"  onclick="pdfZoom(+1)" title="Zvětšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">+</button>
-    <button onclick="if(currentPropSrc)window.open(currentPropSrc,'_blank')" title="Otevřít v Safari s plnou lupou" style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:4px 6px;">↗</button>
-    <button id="btn-prop-add-vykres" onclick="openVykresUpload(window._propPanelKm, window._propPanelSO)" title="Přidat výkres k tomuto SO" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:0 8px;flex-shrink:0;min-width:44px;min-height:44px;">➕</button>
-    <button id="btn-prop-fs" onclick="togglePropFs()">⛶</button>
-    <button id="btn-prop-close" onclick="closePropPanel()">✕</button>
+<!-- Panel bodového objektu SO -->
+<div id="objekt-panel" style="touch-action:pan-x pan-y pinch-zoom;">
+  <div id="objekt-header">
+    <div id="objekt-title">Stavební objekt</div>
+    <button id="btn-objekt-zoom-out" onclick="pdfZoom(-1)" title="Zmenšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">−</button>
+    <button id="btn-objekt-zoom-in"  onclick="pdfZoom(+1)" title="Zvětšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">+</button>
+    <button onclick="if(currentObjektSrc)window.open(currentObjektSrc,'_blank')" title="Otevřít v Safari s plnou lupou" style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:4px 6px;">↗</button>
+    <button id="btn-objekt-add-vykres" onclick="openVykresUpload(window._propPanelKm, window._propPanelSO)" title="Přidat výkres k tomuto SO" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:0 8px;flex-shrink:0;min-width:44px;min-height:44px;">➕</button>
+    <button id="btn-objekt-fs" onclick="togglePropFs()">⛶</button>
+    <button id="btn-objekt-close" onclick="closePropPanel()">✕</button>
   </div>
-  <div id="prop-tabs"></div>
-  <div id="prop-content" style="flex:1;display:flex;flex-direction:column;min-height:0;">
-    <iframe id="prop-iframe" src="" style="flex:1;width:100%;border:none;display:none;touch-action:pan-x pan-y pinch-zoom;"></iframe>
+  <div id="objekt-tabs"></div>
+  <div id="objekt-content" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+    <iframe id="objekt-iframe" src="" style="flex:1;width:100%;border:none;display:none;touch-action:pan-x pan-y pinch-zoom;"></iframe>
     <!-- iOS canvas náhled přes PDF.js -->
-    <div id="prop-canvas-wrap" style="flex:1;display:none;flex-direction:column;background:#333;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;padding:6px;">
-      <div id="prop-canvas-container" style="display:flex;flex-direction:column;align-items:center;gap:8px;"></div>
-      <div id="prop-canvas-status" style="text-align:center;color:#aaa;font-size:12px;padding:10px;"></div>
+    <div id="objekt-canvas-wrap" style="flex:1;display:none;flex-direction:column;background:#333;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;padding:6px;">
+      <div id="objekt-canvas-container" style="display:flex;flex-direction:column;align-items:center;gap:8px;"></div>
+      <div id="objekt-canvas-status" style="text-align:center;color:#aaa;font-size:12px;padding:10px;"></div>
       <div style="text-align:center;padding:8px;">
         <button onclick="openPropPdfExternal()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;">📂 Otevřít PDF v novém okně ↗</button>
       </div>
     </div>
-    <div id="prop-open-wrap" style="flex:1;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;">
+    <div id="objekt-open-wrap" style="flex:1;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;">
       <div style="font-size:40px;">📄</div>
-      <div id="prop-open-label" style="font-size:13px;color:var(--text2);text-align:center;"></div>
+      <div id="objekt-open-label" style="font-size:13px;color:var(--text2);text-align:center;"></div>
       <button onclick="openPropPdfExternal()" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:16px;font-weight:700;cursor:pointer;">📂 Otevřít PDF ↗</button>
     </div>
   </div>
-  <!-- Poznámky propustku -->
-  <div id="prop-notes-section">
-    <div id="prop-notes-header">
-      <span>📝 Poznámky k propustku</span>
-      <button id="btn-prop-add-note" onclick="togglePropNoteForm()">+ Přidat</button>
+  <!-- Poznámky k objektu -->
+  <div id="objekt-notes-section">
+    <div id="objekt-notes-header">
+      <span>📝 Poznámky k objektu</span>
+      <button id="btn-objekt-add-note" onclick="togglePropNoteForm()">+ Přidat</button>
     </div>
-    <div id="prop-notes-list"></div>
+    <div id="objekt-notes-list"></div>
   </div>
-  <div id="prop-note-form">
-    <input id="prop-note-author" class="note-field" type="text" placeholder="Vaše jméno *" maxlength="40" style="margin-bottom:0;">
-    <textarea id="prop-note-text" class="note-field" placeholder="Poznámka k propustku..." style="min-height:50px;margin-bottom:0;resize:none;"></textarea>
-    <div id="prop-photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
+  <div id="objekt-note-form">
+    <input id="objekt-note-author" class="note-field" type="text" placeholder="Vaše jméno *" maxlength="40" style="margin-bottom:0;">
+    <textarea id="objekt-note-text" class="note-field" placeholder="Poznámka k objektu..." style="min-height:50px;margin-bottom:0;resize:none;"></textarea>
+    <div id="objekt-photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
     <div style="display:flex;gap:6px;align-items:center;">
       <label style="cursor:pointer;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;">
-        📷 Foto<input type="file" id="prop-photo-input" accept="image/*" capture="environment" style="display:none;" multiple onchange="addPropPhotos(this)">
+        📷 Foto<input type="file" id="objekt-photo-input" accept="image/*" capture="environment" style="display:none;" multiple onchange="addPropPhotos(this)">
       </label>
       <button onclick="savePropNote()" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px;font-size:13px;cursor:pointer;">Uložit</button>
       <button onclick="togglePropNoteForm()" style="flex:1;background:var(--panel2);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:13px;cursor:pointer;">Zrušit</button>
     </div>
   </div>
   <!-- Edit modal propustek -->
-  <div id="prop-edit-modal" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.7);align-items:center;justify-content:center;">
+  <div id="objekt-edit-modal" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.7);align-items:center;justify-content:center;">
     <div style="background:var(--panel);border-radius:14px;padding:18px;width:min(94vw,420px);max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">
       <div style="font-weight:700;font-size:15px;color:var(--accent2);">✏️ Editace poznámky</div>
-      <input id="prop-edit-author" class="note-field" type="text" placeholder="Jméno *" maxlength="40">
-      <textarea id="prop-edit-text" class="note-field" placeholder="Text..." style="min-height:70px;resize:none;"></textarea>
-      <div id="prop-edit-photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      <input id="objekt-edit-author" class="note-field" type="text" placeholder="Jméno *" maxlength="40">
+      <textarea id="objekt-edit-text" class="note-field" placeholder="Text..." style="min-height:70px;resize:none;"></textarea>
+      <div id="objekt-edit-photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
       <label style="cursor:pointer;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:13px;text-align:center;">
-        📷 Přidat foto<input type="file" id="prop-edit-photo-input" accept="image/*" capture="environment" style="display:none;" multiple onchange="addPropEditPhotos(this)">
+        📷 Přidat foto<input type="file" id="objekt-edit-photo-input" accept="image/*" capture="environment" style="display:none;" multiple onchange="addPropEditPhotos(this)">
       </label>
       <div style="display:flex;gap:8px;">
         <button onclick="savePropEdit()" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px;font-size:14px;cursor:pointer;">💾 Uložit</button>
@@ -19414,7 +19678,7 @@ function copyDiaryExport(){
 
       <details style="border-bottom:1px solid var(--border);padding:7px 0;"><summary style="cursor:pointer;font-weight:700;">☰ Vrstvy a mapa</summary>
         <div style="padding:6px 0 2px;color:var(--text2);">
-          Podklady (Outdoor / Basic / Letecká / OSM), <b>katastr</b>, trasa, staničení po 100 a 20 m, SO objekty, propustky, poznámky, úkoly, měření, zkoušky, <b>fotky v mapě</b>.<br>
+          Podklady (Outdoor / Basic / Letecká / OSM), <b>katastr</b>, trasa, staničení po 100 a 20 m, SO objekty, poznámky, úkoly, měření, zkoušky, <b>fotky v mapě</b>.<br>
           Podkategorie (např. u poznámek) se rozbalí až po zapnutí hlavní vrstvy.<br>
           <b>⚙️ Zobrazení při spuštění:</b> naklikej si vrstvy a dej <b>„💾 Uložit toto jako výchozí"</b> — takhle se Ti appka otevře příště.<br>
           <b>Výkresy:</b> ťukni na značku staničení → PDF panel se záložkami (situace, řezy, profily…).
