@@ -8993,7 +8993,7 @@ function buildSO() {
     var n=0;
     for(var i=0;i<_drawn.length;i++){ var r=_drawn[i]; if(so.kmOd <= r[1] && so.kmDo >= r[0]) n++; }
     _drawn.push([so.kmOd, so.kmDo]);
-    var mag = 16 + Math.floor(n/2)*15;     // 16,16,31,31,46,46…
+    var mag = 12 + Math.floor(n/2)*10;     // 12,12,22,22,32,32… (menší rozptyl)
     return ((n % 2 === 0) ? 1 : -1) * mag;  // střídej levá/pravá strana osy
   }
 
@@ -9028,20 +9028,17 @@ function buildSO() {
     line.bindTooltip('<b>'+so.id+'</b> · '+(so.nazev||''), {sticky:true, className:'so-tooltip', direction:'top'});
     line.addTo(subGroup);
 
-    // JEDEN popisek na linii (u ~1/3 délky), na straně offsetu, čitelně natočený (_lblRot – nikdy vzhůru nohama).
-    var pi = Math.min(pts.length-1, Math.max(1, Math.round(pts.length*0.33)));
-    var bear2 = bearList[pi] || bearList[0] || 0;
-    var sideSign = soOffset >= 0 ? 1 : -1;
-    var perpRad2 = (bear2 - 90) * Math.PI / 180;
-    var offExtra = (14*sideSign) / 6371000;
-    var latL = pts[pi][0] + offExtra*(180/Math.PI)*Math.cos(perpRad2);
-    var lngL = pts[pi][1] + offExtra*(180/Math.PI)*Math.sin(perpRad2)/Math.cos(pts[pi][0]*Math.PI/180);
-    var lbl = L.divIcon({ className:'',
-      html:'<div style="color:'+so.barva+';font-size:12px;font-weight:800;white-space:nowrap;'+
-           'text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'+
-           'transform:rotate('+_lblRot(bear2+90).toFixed(0)+'deg);transform-origin:0 50%;">'+so.id+'</div>',
-      iconSize:[0,0], iconAnchor:[0,0] });
-    L.marker([latL,lngL],{icon:lbl,interactive:false}).addTo(subGroup);
+    // Popisek SO opakovaně po ~200 m PŘÍMO NA lince (vystředěný), čitelně natočený (_lblRot – nikdy vzhůru nohama).
+    var STEP=10;                                  // 10 × 20 m = ~200 m
+    for(var pi=Math.round(STEP/2); pi < pts.length; pi += STEP){
+      var bear2 = bearList[pi] || bearList[0] || 0;
+      var lbl = L.divIcon({ className:'',
+        html:'<div style="color:'+so.barva+';font-size:11px;font-weight:800;white-space:nowrap;'+
+             'text-shadow:-1.5px -1.5px 0 #fff,1.5px -1.5px 0 #fff,-1.5px 1.5px 0 #fff,1.5px 1.5px 0 #fff,0 0 3px #fff;'+
+             'transform:translate(-50%,-50%) rotate('+_lblRot(bear2+90).toFixed(0)+'deg);">'+so.id+'</div>',
+        iconSize:[0,0], iconAnchor:[0,0] });
+      L.marker(pts[pi],{icon:lbl,interactive:false}).addTo(subGroup);
+    }
   });
 }
 
