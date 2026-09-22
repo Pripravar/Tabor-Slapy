@@ -6,7 +6,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 // VERZE cache - při změně příště zvedni, ať si telefony stáhnou novou verzi.
-const CACHE_VERSION = 'tabor-slapy-v1-2026-09-22';
+const CACHE_VERSION = 'tabor-slapy-v2-2026-09-22';
 
 const CORE_ASSETS = [
   './',
