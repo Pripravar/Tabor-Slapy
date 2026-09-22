@@ -1,0 +1,6 @@
+firebase klíč/
+*firebase-adminsdk*.json
+serviceAccountKey*.json
+PDPS/
+node_modules/
+.DS_Store

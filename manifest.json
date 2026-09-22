@@ -1,0 +1,16 @@
+{
+  "name": "II/137 Slapy – obchvat Tábora",
+  "short_name": "Slapy–Tábor",
+  "description": "Mobilní webová mapa stavby II/137 Slapy (obchvat Tábora)",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1a2e",
+  "theme_color": "#16213e",
+  "lang": "cs",
+  "icons": [
+    { "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='28' fill='%2316213e'/><text x='96' y='130' font-size='110' text-anchor='middle' fill='%23f5a623'>🗺️</text></svg>", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='76' fill='%2316213e'/><text x='256' y='350' font-size='290' text-anchor='middle' fill='%23f5a623'>🗺️</text></svg>", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
