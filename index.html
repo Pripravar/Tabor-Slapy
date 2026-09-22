@@ -9029,15 +9029,20 @@ function buildSO() {
     line.addTo(subGroup);
 
     // Popisek SO opakovaně po ~200 m PŘÍMO NA lince (vystředěný), čitelně natočený (_lblRot – nikdy vzhůru nohama).
+    // Popisek je KLIKACÍ (větší dotyková plocha) → otevře výkresy; na tenkou čáru se špatně trefuje.
     var STEP=10;                                  // 10 × 20 m = ~200 m
     for(var pi=Math.round(STEP/2); pi < pts.length; pi += STEP){
       var bear2 = bearList[pi] || bearList[0] || 0;
       var lbl = L.divIcon({ className:'',
-        html:'<div style="color:'+so.barva+';font-size:11px;font-weight:800;white-space:nowrap;'+
+        html:'<div style="color:'+so.barva+';font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer;pointer-events:auto;padding:5px 7px;'+
              'text-shadow:-1.5px -1.5px 0 #fff,1.5px -1.5px 0 #fff,-1.5px 1.5px 0 #fff,1.5px 1.5px 0 #fff,0 0 3px #fff;'+
              'transform:translate(-50%,-50%) rotate('+_lblRot(bear2+90).toFixed(0)+'deg);">'+so.id+'</div>',
         iconSize:[0,0], iconAnchor:[0,0] });
-      L.marker(pts[pi],{icon:lbl,interactive:false}).addTo(subGroup);
+      (function(soo,mid){
+        L.marker(pts[pi],{icon:lbl,interactive:true,zIndexOffset:120})
+          .on('click', function(e){ L.DomEvent.stopPropagation(e); openObjektPanel(Object.assign({km:mid}, soo)); })
+          .addTo(subGroup);
+      })(so,_mid);
     }
   });
 }
