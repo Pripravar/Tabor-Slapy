@@ -503,12 +503,13 @@ textarea.note-field { min-height:80px; resize:vertical; }
   overflow: visible !important;
 }
 .prop-pin {
-  width: 28px; height: 28px;
+  min-width: 28px; height: 26px;
+  padding: 0 9px;
   background: #1565c0;
   border: 3px solid #fff;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 9px; font-weight: 800;
+  border-radius: 14px;             /* pilulka – vejde se i „SO 201" */
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; font-weight: 800;
   box-shadow: 0 2px 6px rgba(0,0,0,.5);
   cursor: pointer;
   transition: transform .15s;
@@ -2318,6 +2319,11 @@ function _githubUrlToStoragePath(u){
   } catch(e){}
   return null;
 }
+// Zkusí seznam kandidátních cest (různé Unicode normalizace) → první, co v Storage existuje.
+function _resolveTryList(cands, i){
+  if(i>=cands.length) return Promise.reject(new Error('not found'));
+  return _privStorage().ref(cands[i]).getDownloadURL().catch(function(){ return _resolveTryList(cands, i+1); });
+}
 // Vrátí Promise<URL>. Přijímá relativní cestu ('pdf/…','standalone/…','drone/…','overlay/…')
 // i plnou starou URL (dual-read). Cachuje. Při selhání spadne na veřejnou Pages URL.
 function resolveFileUrl(path){
@@ -2335,7 +2341,11 @@ function resolveFileUrl(path){
   if(_fileUrlCache[path]) return Promise.resolve(_fileUrlCache[path]);
   var pr;
   try {
-    pr = _privStorage().ref(path).getDownloadURL()
+    // Soubory nahrané z macOS mají názvy v Unicode NFD (á = a+◌́), zdroják má NFC → getDownloadURL
+    // by je nenašel. Zkoušíme proto NFD (tak jsou uložené v bucketu), pak originál, pak NFC.
+    var cands=[], seen={};
+    [(path.normalize?path.normalize('NFD'):path), path, (path.normalize?path.normalize('NFC'):path)].forEach(function(c){ if(c && !seen[c]){ seen[c]=1; cands.push(c); } });
+    pr = _resolveTryList(cands, 0)
       .then(function(u){ _fileUrlCache[path] = u; return u; })
       .catch(function(){ _fileFallbackHits++; return new URL(path, location.href).href; });  // dual-read
   } catch(e){
