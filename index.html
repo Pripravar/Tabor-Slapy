@@ -1552,9 +1552,10 @@ document.addEventListener('touchend', function(e){
       <input id="plochy-opacity" type="range" min="10" max="100" value="55" oninput="setPlochyOpacity(this.value)" style="flex:1;">
     </div>
   </div>
-  <div data-perm="objekty">
+  <!-- Voda/elektro SO 103 = Sulice overlay (voda_so103.json) – Slapy-Tábor nemá; skryto. Až bude, odeber display:none a naplň overlay. -->
+  <div data-perm="objekty" style="display:none;">
   <div class="layer-row">
-    <label>🚰 Voda/elektro SO 103</label>
+    <label>🚰 Voda/elektro</label>
     <label class="toggle"><input type="checkbox" id="lyr-voda" onchange="setVodaVisible(this.checked)"><span class="toggle-slider"></span></label>
   </div>
   </div><!-- /objekty voda -->
@@ -2312,7 +2313,7 @@ function _githubUrlToStoragePath(u){
   try {
     var m = String(u).match(/githubusercontent\.com\/[^\/]+\/[^\/]+\/[^\/]+\/(.+)$/);
     if(m) return decodeURIComponent(m[1].split('?')[0]);
-    m = String(u).match(/pripravar\.github\.io\/Sulice---Zelivec\/(.+)$/i);
+    m = String(u).match(/pripravar\.github\.io\/Tabor-Slapy\/(.+)$/i);
     if(m) return decodeURIComponent(m[1].split('?')[0]);
   } catch(e){}
   return null;
@@ -2669,7 +2670,7 @@ function showToast(msg,dur) {
 // ── MAPA ──────────────────────────────
 function initMap() {
   map=L.map('map',{
-    center:[49.917,14.580],
+    center:(typeof GPX_POINTS!=='undefined'&&GPX_POINTS.length?GPX_POINTS[Math.floor(GPX_POINTS.length/2)].slice(0,2):[49.3956,14.659]), // střed trasy TÉTO stavby (dřív natvrdo Sulice)
     zoom:14,
     maxZoom:23,
     zoomControl:true,
@@ -5537,7 +5538,7 @@ function droneSyncHandles(){
 // Vstup: 4 čísla sever, jih, východ, západ (zeměpisná šířka/délka, WGS84), oddělená čárkou/mezerou.
 function droneSetExactBounds(){
   if(!droneEditOverlay){ showToast('Nejdřív vlož snímek', 2500); return; }
-  var raw = prompt('Zadej georeferencované hranice v pořadí:\nSEVER, JIH, VÝCHOD, ZÁPAD\n(zeměpisná šířka/délka, WGS84 – z WebODM / KMZ)\n\nnapř.: 49.933835, 49.929820, 14.564862, 14.559330');
+  var raw = prompt('Zadej georeferencované hranice v pořadí:\nSEVER, JIH, VÝCHOD, ZÁPAD\n(zeměpisná šířka/délka, WGS84 – z WebODM / KMZ)\n\nnapř.: 49.398000, 49.393000, 14.690000, 14.634000');
   if(raw === null) return;
   var n = (raw.match(/-?\d+(\.\d+)?/g) || []).map(Number);
   if(n.length < 4){ showToast('Zadej 4 čísla: sever, jih, východ, západ', 3200); return; }
@@ -19947,7 +19948,7 @@ function copyDiaryExport(){
     <input type="text" class="diary-field" id="se-firma" placeholder="Vlastník / nájem">
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">SO</label>
-    <input type="text" class="diary-field" id="se-so" placeholder="např. SO 101, SO 102 (volitelné)">
+    <input type="text" class="diary-field" id="se-so" placeholder="např. SO 101, SO 111 (volitelné)">
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">Aktivní od</label>
     <input type="date" class="diary-field" id="se-aktivniOd">
@@ -19981,7 +19982,7 @@ function copyDiaryExport(){
     <input type="tel" class="diary-field" id="oe-telefon" placeholder="+420 … (volitelné)">
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">SO (stavební objekt, ke kterému osoba patří)</label>
-    <input type="text" class="diary-field" id="oe-so" placeholder="např. SO 101, SO 102… (volitelné)">
+    <input type="text" class="diary-field" id="oe-so" placeholder="např. SO 101, SO 111… (volitelné)">
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">Aktivní od</label>
     <input type="date" class="diary-field" id="oe-aktivniOd">
@@ -20050,11 +20051,11 @@ function copyDiaryExport(){
     </select>
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">Stavební objekt (SO)</label>
-    <input type="text" class="kzp-field" id="kzp-so" placeholder="např. SO 101 / SO 102 / SO 103 …" list="kzp-so-list">
+    <input type="text" class="kzp-field" id="kzp-so" placeholder="např. SO 101 / SO 111 / SO 201 …" list="kzp-so-list">
     <datalist id="kzp-so-list"></datalist>
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">Název / popis</label>
-    <input type="text" class="kzp-field" id="kzp-nazev" placeholder="např. Silnice II/603 úsek 1 — intravilán">
+    <input type="text" class="kzp-field" id="kzp-nazev" placeholder="např. SO 101 – komunikace, úsek 1">
 
     <label style="font-size:11px;color:var(--text2);text-transform:uppercase;">Technologická část</label>
     <input type="text" class="kzp-field" id="kzp-tc" placeholder="např. Komunikace, Mosty, Veřejné osvětlení…" list="kzp-tc-list">

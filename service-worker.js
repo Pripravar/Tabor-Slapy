@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SERVICE WORKER – Sulice-Želivec
+   SERVICE WORKER – II/137 Slapy – Tábor
    - Cache pro offline využití základní HTML aplikace
    - Příjem Web Push notifikací (Firebase Cloud Messaging)
    Vytvořeno: 2026-05-12
@@ -104,13 +104,13 @@ self.addEventListener('push', function(event) {
     try { data = { notification: { title: 'Notifikace', body: event.data.text() } }; } catch(_) {}
   }
   var n = data.notification || {};
-  var title = n.title || 'Sulice – Želivec';
+  var title = n.title || 'II/137 Slapy – Tábor';
   var options = {
     body:    n.body || '',
     icon:    n.icon || './manifest.json',
     badge:   n.badge,
     data:    data.data || {},
-    tag:     (data.data && data.data.taskId) || 'sulice-notify',
+    tag:     (data.data && data.data.taskId) || 'tabor-slapy-notify',
     renotify: true
   };
   event.waitUntil(self.registration.showNotification(title, options).then(function(){
