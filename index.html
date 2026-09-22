@@ -2378,7 +2378,16 @@ var CALIB_POINTS = [
 // ── DOKUMENTY podle km ─────────────────────────────────
 // VŠECHNY situace (SO 101 + SO 102 + SO 103 + SO 104 + SO 105 + SO 106 + SO 107)
 // findDocsForKm vrátí všechny pasující → zobrazí se jako záložky v PDF panelu
-var DOCS_SITUACE = [];
+var DOCS_SITUACE = [
+  {kmOd:0.000, kmDo:1.500, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.3_01_Koor_sit.pdf', nazev:'Koordinační situace 1 (km 0,0–1,5)'},
+  {kmOd:1.500, kmDo:2.500, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.3_02_Koor_sit.pdf', nazev:'Koordinační situace 2 (km 1,5–2,5)'},
+  {kmOd:2.500, kmDo:3.700, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.3_03_Koor_sit.pdf', nazev:'Koordinační situace 3 (km 2,5–3,7)'},
+  {kmOd:0.000, kmDo:1.500, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.2.1_Kata_sit_km_0.000 - 1.500.pdf', nazev:'Katastrální situace (km 0,0–1,5)'},
+  {kmOd:1.500, kmDo:2.500, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.2.2_Kata_sit_km_1.500 - 2.500.pdf', nazev:'Katastrální situace (km 1,5–2,5)'},
+  {kmOd:2.500, kmDo:3.715, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.2.3_Kata_sit_km_2.500 - 3.715.pdf', nazev:'Katastrální situace (km 2,5–3,7)'},
+  {kmOd:3.400, kmDo:3.720, soubor:PDF_BASE+'PDPS křižovatka Slapy/C.-Situační výkresy/C.2_Koordinacni situace.R1.Published.pdf', nazev:'Koordinační situace – křižovatka (konec)'},
+  {kmOd:0.000, kmDo:3.720, soubor:PDF_BASE+'PDPS přeložka Slapy/C_Situacni vykresy/C.1_Situace_sirsich_vztahu.pdf', nazev:'Situace širších vztahů (celá stavba)'},
+];
 
 var DOCS_PP = [];
 
