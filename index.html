@@ -847,7 +847,7 @@ body.submode #user-badge, body.submode #btn-layers, body.submode #btn-standalone
 .auth-note b { color:var(--green); }
 .auth-note-warn { background:rgba(245,166,35,0.10); border-color:rgba(245,166,35,0.30); }
 .auth-note-warn b { color:var(--accent2); }
-#auth-view-main, #auth-view-phone, #auth-view-code, #auth-view-name { display:flex; flex-direction:column; gap:10px; }
+#auth-view-main, #auth-view-phone, #auth-view-code, #auth-view-name, #auth-view-email { display:flex; flex-direction:column; gap:10px; }
 #auth-error { color:#ff6b81; font-size:12px; text-align:center; min-height:14px; }
 #user-badge { position:relative; display:flex; align-items:center; gap:6px; background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:4px 8px; font-size:12px; color:var(--text); cursor:pointer; max-width:140px; }
 #user-badge img { width:20px; height:20px; border-radius:50%; flex-shrink:0; }
@@ -1229,13 +1229,17 @@ document.addEventListener('touchend', function(e){
 
     <!-- Pohled 5: přihlášení e‑mailem + heslem -->
     <div id="auth-view-email" style="display:none;">
-      <p style="text-align:left;">Přihlášení e‑mailem:</p>
+      <p style="text-align:left;font-weight:700;" id="email-title">Přihlášení e‑mailem</p>
+      <div class="auth-note" id="email-help" style="text-align:left;">
+        <b>Poprvé tady?</b> Klepni na <b>„Nemám účet – vytvořit"</b>, zadej svůj e‑mail a zvol si heslo (napíšeš ho 2× kvůli překlepu). Příště se stejným e‑mailem a heslem přihlásíš.
+      </div>
       <input type="email" id="email-input" class="auth-input" placeholder="tvůj@email.cz" autocomplete="email" inputmode="email" autocapitalize="off">
       <input type="password" id="email-pass" class="auth-input" placeholder="Heslo (min. 6 znaků)" autocomplete="current-password">
-      <button class="auth-google" onclick="emailLogin()">Přihlásit se →</button>
-      <button class="auth-phone-btn" onclick="emailRegister()">Nový účet (registrovat)</button>
-      <div style="text-align:center;margin-top:6px;"><a href="#" onclick="emailReset();return false;" style="color:var(--text2);font-size:12px;">Zapomenuté heslo?</a></div>
-      <div class="auth-note">Jakákoli e‑mailová adresa (nejen Gmail). Bez SMS.</div>
+      <input type="password" id="email-pass2" class="auth-input" placeholder="Heslo znovu (pro kontrolu)" autocomplete="new-password" style="display:none;">
+      <button class="auth-google" id="email-primary" onclick="emailPrimary()">Přihlásit se →</button>
+      <button class="auth-phone-btn" id="email-toggle" onclick="_emailToggleMode()">Nemám účet – vytvořit</button>
+      <div style="text-align:center;margin-top:2px;"><a href="#" id="email-forgot" onclick="emailReset();return false;" style="color:var(--text2);font-size:12px;">Zapomněl(a) jsem heslo →</a></div>
+      <div class="auth-note">Funguje <b>jakákoli</b> e‑mailová adresa (nejen Gmail). E‑mail je Tvoje přihlašovací jméno — musí být <b>platný</b> (kvůli obnově hesla). Bez SMS.</div>
       <button class="auth-back" onclick="showMainView()">↩ Zpět</button>
     </div>
 
@@ -2554,15 +2558,8 @@ var PROPUSTEK_TZ = '';
 var DOPLNKY_SO = [];
 
 // NN NADZEMNÍ VEDENÍ - křížení s osou silnice (značka ⚡, popup "NN nadzemní")
-// Poznámka: úsek km 0,145-0,186 obsahuje 3 křížení (značky na 0,145 / 0,166 / 0,186)
-var VEDENI_NN = [
-  {km: 0.077},
-  {km: 0.145},
-  {km: 0.166},
-  {km: 0.186},
-  {km: 0.234},
-  {km: 0.266},
-];
+// Slapy-Tábor: zatím nezadáno (data byla pozůstatek ze Sulic – vyčištěno). Doplní se z PDPS až budou známa.
+var VEDENI_NN = [];
 
 // PRACOVNÍ ŘEZY - PDPS Sulice je nemá, prázdná lookup mapa
 var DOCS_PR = {};
@@ -10732,7 +10729,7 @@ window._quickPhotoDone = false;   // URL ?foto/#foto → foťák (jednou za náv
 // Doplň sem uid koordinátora/koordinátorů (admin smí mazat cokoliv).
 // uid najdeš po přihlášení v konzoli: window.currentUser.uid, nebo ve
 // Firebase v /uzivatele. Prázdné pole = admina nemá nikdo.
-var ADMIN_UIDS = []; // arasid33@gmail.com (koordinátor)
+var ADMIN_UIDS = [ 'PNu1CsaP2cUwmB9NNjUE8ILg89f2' ]; // arasid33@gmail.com (koordinátor) – UID v projektu tabor-slapy
 // Vrací true, když aktuální uživatel smí smazat záznam daného vlastníka:
 //  - vlastník (shodné uid) smí,
 //  - admin (v ADMIN_UIDS) smí cokoliv,
@@ -12280,16 +12277,35 @@ function showMainView()  { _setAuthView('main'); }
 function showPhoneView() { _setAuthView('phone'); }
 function showCodeView()  { _setAuthView('code'); }
 function showNameView()  { _setAuthView('name'); _fillFirmaList(); }
-function showEmailView() { _setAuthView('email'); }
+function showEmailView() { _setAuthView('email'); window._emailReg=false; _emailApplyMode(); }
+function _emailApplyMode(){
+  var reg = !!window._emailReg;
+  var p2=document.getElementById('email-pass2'), title=document.getElementById('email-title'),
+      prim=document.getElementById('email-primary'), tog=document.getElementById('email-toggle'),
+      help=document.getElementById('email-help'), forgot=document.getElementById('email-forgot'),
+      pass=document.getElementById('email-pass');
+  if(p2) p2.style.display = reg ? '' : 'none';
+  if(title) title.textContent = reg ? 'Vytvoření nového účtu' : 'Přihlášení e‑mailem';
+  if(prim) prim.textContent = reg ? 'Vytvořit účet →' : 'Přihlásit se →';
+  if(tog) tog.textContent = reg ? '← Už mám účet (přihlásit)' : 'Nemám účet – vytvořit';
+  if(forgot) forgot.style.display = reg ? 'none' : '';
+  if(help) help.style.display = reg ? 'none' : '';
+  if(pass) pass.setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
+}
+function _emailToggleMode(){ window._emailReg=!window._emailReg; _emailApplyMode(); showAuthError(''); }
+function emailPrimary(){ if(window._emailReg) emailRegister(); else emailLogin(); }
+function _emailValid(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function emailLogin(){
   var e=(document.getElementById('email-input').value||'').trim();
   var p=document.getElementById('email-pass').value||'';
   if(!e||!p){ showAuthError('Zadej e‑mail i heslo.'); return; }
+  if(!_emailValid(e)){ showAuthError('E‑mail musí mít tvar jmeno@domena.cz (se zavináčem).'); return; }
   showAuthError('⏳ Přihlašuji…');
   fbAuth.signInWithEmailAndPassword(e,p).then(function(){ showAuthError(''); }).catch(function(err){
     var c=err&&err.code;
-    if(c==='auth/user-not-found') showAuthError('Účet neexistuje — klepni „Nový účet (registrovat)".');
-    else if(c==='auth/wrong-password'||c==='auth/invalid-credential') showAuthError('Špatné heslo. (Nebo „Zapomenuté heslo".)');
+    if(c==='auth/user-not-found') showAuthError('Účet s tímto e‑mailem neexistuje — klepni „Nemám účet – vytvořit".');
+    else if(c==='auth/wrong-password'||c==='auth/invalid-credential') showAuthError('Špatné heslo. (Nebo „Zapomněl(a) jsem heslo".)');
+    else if(c==='auth/invalid-email') showAuthError('Neplatný tvar e‑mailu.');
     else if(c==='auth/operation-not-allowed') showAuthError('⚠ Přihlášení e‑mailem není zapnuté (Admin: Authentication → Email/Password → Enable).');
     else showAuthError('Chyba: '+(err.message||c));
   });
@@ -12297,13 +12313,16 @@ function emailLogin(){
 function emailRegister(){
   var e=(document.getElementById('email-input').value||'').trim();
   var p=document.getElementById('email-pass').value||'';
+  var p2=(document.getElementById('email-pass2')||{}).value||'';
   if(!e){ showAuthError('Zadej e‑mail.'); return; }
+  if(!_emailValid(e)){ showAuthError('Zadej platný e‑mail (jmeno@domena.cz, se zavináčem).'); return; }
   if(p.length<6){ showAuthError('Heslo musí mít aspoň 6 znaků.'); return; }
+  if(p!==p2){ showAuthError('Hesla se neshodují — napiš dvakrát stejné.'); return; }
   showAuthError('⏳ Zakládám účet…');
   fbAuth.createUserWithEmailAndPassword(e,p).then(function(){ showAuthError(''); }).catch(function(err){
     var c=err&&err.code;
-    if(c==='auth/email-already-in-use') showAuthError('Tento e‑mail už účet má — dej „Přihlásit se".');
-    else if(c==='auth/invalid-email') showAuthError('Neplatný e‑mail.');
+    if(c==='auth/email-already-in-use') showAuthError('Tento e‑mail už účet má — přepni na „Už mám účet (přihlásit)".');
+    else if(c==='auth/invalid-email') showAuthError('Neplatný tvar e‑mailu.');
     else if(c==='auth/weak-password') showAuthError('Slabé heslo (min. 6 znaků).');
     else if(c==='auth/operation-not-allowed') showAuthError('⚠ Registrace e‑mailem není zapnutá (Admin: Email/Password → Enable).');
     else showAuthError('Chyba: '+(err.message||c));
@@ -12311,8 +12330,13 @@ function emailRegister(){
 }
 function emailReset(){
   var e=(document.getElementById('email-input').value||'').trim();
-  if(!e){ showAuthError('Napiš e‑mail a pak „Zapomenuté heslo".'); return; }
-  fbAuth.sendPasswordResetEmail(e).then(function(){ showAuthError('📧 Odkaz pro reset hesla jsme poslali na '+e); }).catch(function(err){ showAuthError('Chyba: '+((err&&err.message)||'')); });
+  if(!e){ showAuthError('Napiš nahoru e‑mail a pak klepni „Zapomněl(a) jsem heslo".'); return; }
+  if(!_emailValid(e)){ showAuthError('Zadej platný e‑mail se zavináčem.'); return; }
+  fbAuth.sendPasswordResetEmail(e).then(function(){ showAuthError('📧 Odkaz pro nastavení nového hesla jsme poslali na '+e+'. Zkontroluj i spam.'); }).catch(function(err){
+    var c=err&&err.code;
+    if(c==='auth/user-not-found') showAuthError('Na tenhle e‑mail není účet — nejdřív „Nemám účet – vytvořit".');
+    else showAuthError('Chyba: '+((err&&err.message)||''));
+  });
 }
 // Naplní <datalist id="firma-list"> firmami, které už jsou u uživatelů (našeptávač – proti překlepům,
 // ať seskupení „po firmách" v šichtovce sedí). Před vstupem do appky čte /uzivatele jednorázově.
