@@ -2227,8 +2227,42 @@ document.addEventListener('touchend', function(e){
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  ⚙️ NASTAVENÍ STAVBY — u NOVÉ aplikace přepiš JEN tento blok (+ apiKey/appId
+//  v FIREBASE_CONFIG a MAPY_API_KEY). Vše ostatní (název v title/hlavičce/deníku,
+//  slug fotek, RTDB URL, Cloud Function URL, projectId, bucket, km, repo, admin)
+//  se ODVODÍ odtud. „Stavba je nově XXX" = změna jen zde.
+// ═══════════════════════════════════════════════════════════════════════════
+var STAVBA = {
+  nazev:           'II/137 Slapy – Tábor',    // plný název (title, hlavička, deník, toast, PDF)
+  nazevKratky:     'Slapy–Tábor',             // krátký název (PWA dlaždice, sdílení)
+  nadpisPrefix:    'II/137 ',                  // hlavička appky – šedý prefix
+  nadpisNazev:     'Slapy',                    // hlavička appky – zvýrazněný název
+  nadpisSuffix:    ' – Tábor',                // hlavička appky – suffix
+  slug:            'slapy-tabor',              // prefix názvů stahovaných fotek / ZIP / IndexedDB
+  firebaseProject: 'tabor-slapy',             // Firebase projekt (RTDB + Auth + Storage + CF)
+  cfRegion:        'europe-west1',            // region Cloud Functions + Realtime DB
+  storageBucket:   'gs://tabor-slapy-eu',      // EU bucket pro PDF/fotky (může se lišit od projectId)
+  kmStart:         0.000,
+  kmEnd:           3.700,
+  githubRepo:      'Pripravar/Tabor-Slapy',
+  adminUids:       [ 'PNu1CsaP2cUwmB9NNjUE8ILg89f2' ]  // UID koordinátora V TOMTO projektu (per-projekt!)
+};
+var STAVBA_SLUG = STAVBA.slug;
+var _CF_BASE = 'https://' + STAVBA.cfRegion + '-' + STAVBA.firebaseProject + '.cloudfunctions.net/';
+// Název stavby do title/hlavičky/PWA – z STAVBA (HTML níže má jen zástupný text, přepíše se odtud).
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    document.title = STAVBA.nazev;
+    var mt=document.querySelector('meta[name="apple-mobile-web-app-title"]'); if(mt) mt.setAttribute('content', STAVBA.nazevKratky);
+    var h2=document.querySelector('#auth-gate .auth-box h2'); if(h2) h2.textContent='🗺️ '+STAVBA.nazev;
+    var hp=document.querySelector('#header h1 .title-prefix'); if(hp) hp.textContent=STAVBA.nadpisPrefix;
+    var hn=document.querySelector('#header h1 .title-name');   if(hn) hn.textContent=STAVBA.nadpisNazev;
+    var hs=document.querySelector('#header h1 .title-suffix'); if(hs) hs.textContent=STAVBA.nadpisSuffix;
+  }catch(e){}
+});
 var MAPY_API_KEY = 'n4vDG-d4mkhllq8P_9783hgyMtm9U6RU6WwwGvvpvuY';
-var FIREBASE_URL = 'https://tabor-slapy-default-rtdb.europe-west1.firebasedatabase.app';
+var FIREBASE_URL = 'https://' + STAVBA.firebaseProject + '-default-rtdb.' + STAVBA.cfRegion + '.firebasedatabase.app';
 
 // ════════════════════════════════════════════════════════════════════
 // Firebase konfigurace pro Auth + Messaging (PUSH notifikace).
@@ -2241,10 +2275,10 @@ var FIREBASE_URL = 'https://tabor-slapy-default-rtdb.europe-west1.firebasedataba
 // ════════════════════════════════════════════════════════════════════
 var FIREBASE_CONFIG = {
   apiKey:            'AIzaSyByyIBF9NniwhWP9MArZPaX_Q9fAqrrLUM',
-  authDomain:        'tabor-slapy.firebaseapp.com',
+  authDomain:        STAVBA.firebaseProject + '.firebaseapp.com',
   databaseURL:       FIREBASE_URL,
-  projectId:         'tabor-slapy',
-  storageBucket:     'tabor-slapy.firebasestorage.app',
+  projectId:         STAVBA.firebaseProject,
+  storageBucket:     STAVBA.firebaseProject + '.firebasestorage.app',
   messagingSenderId: '15641009444',
   appId:             '1:15641009444:web:809a5c1e3f2d18434f27b1'
 };
@@ -2269,17 +2303,17 @@ try {
 // Messaging inicializujeme až po service worker registraci (níže v skriptu)
 var fbMessaging = null;
 
-var KM_START = 0.000;
-var KM_END   = 3.700;
+var KM_START = STAVBA.kmStart;
+var KM_END   = STAVBA.kmEnd;
 
-var GITHUB_USER_REPO = 'Pripravar/Tabor-Slapy';
+var GITHUB_USER_REPO = STAVBA.githubRepo;
 var GITHUB_BRANCH_PDF = 'main';
 // Upload fotek jde přes Cloud Function (GitHub token zůstává na serveru, ne v prohlížeči).
-var UPLOAD_FN_URL = 'https://europe-west1-tabor-slapy.cloudfunctions.net/uploadFoto';
+var UPLOAD_FN_URL = _CF_BASE + 'uploadFoto';
 // Upload PDF výkresů jde přes vlastní Cloud Function (commit do pdf/SO_xxx/).
-var UPLOAD_VYKRES_FN_URL = 'https://europe-west1-tabor-slapy.cloudfunctions.net/uploadVykres';
+var UPLOAD_VYKRES_FN_URL = _CF_BASE + 'uploadVykres';
 // Upload fotek z dronu (commit do drone/, bez zmenšení na 1600 px).
-var UPLOAD_DRONE_FN_URL = 'https://europe-west1-tabor-slapy.cloudfunctions.net/uploadDroneFoto';
+var UPLOAD_DRONE_FN_URL = _CF_BASE + 'uploadDroneFoto';
 // Bázová cesta k PDF výkresům - RELATIVNÍ k aplikaci (na GitHub Pages).
 // Důvod: raw.githubusercontent.com servíruje PDF jako application/octet-stream
 // → iframe je nezobrazí. Pages servírují PDF jako application/pdf → iframe OK.
@@ -2292,7 +2326,7 @@ var PDF_BASE = 'pdf/';
 // appka jede dál beze změny. Call-sity se přepojují až ve Fázi A/B.
 // ══════════════════════════════════════════════════════════════════
 var USE_PRIVATE_FILES = true;        // hlavní vypínač (lze rychle vrátit na false)
-var STORAGE_BUCKET_URL = 'gs://tabor-slapy-eu';   // EU multi-region bucket (data v EU – GDPR)
+var STORAGE_BUCKET_URL = STAVBA.storageBucket;   // EU bucket (odvozeno z STAVBA)
 function _privStorage(){ return firebase.app().storage(STORAGE_BUCKET_URL); }
 var _fileUrlCache = {};              // cesta → URL (nebo rozpracovaná Promise)
 var _fileFallbackHits = 0;          // počítadlo fallbacků (musí být 0 před Fází C)
@@ -2346,7 +2380,7 @@ function resolveFileUrl(path){
 function setImgResolved(imgEl, path){ if(imgEl) resolveFileUrl(path).then(function(u){ imgEl.src = u; }); }
 function setPdfFrameResolved(frameEl, path){ if(frameEl) resolveFileUrl(path).then(function(u){ frameEl.src = pdfFrameSrcFor(u); }); }
 
-// ── BODY OSY TRASY (65 GPX bodů z mapy.cz, ZÚ Hlubočinka → KÚ Kamenice, ~5,0 km) ──
+// ── BODY OSY TRASY (GPX z mapy.cz, ZÚ km 0,000 → KÚ km 3,700, II/137 Slapy–Tábor) ──
 var GPX_POINTS = [
   [49.397495,14.683590],[49.397404,14.682693],[49.397370,14.681723],
   [49.397408,14.680259],[49.397500,14.678600],[49.397575,14.677217],
@@ -2839,10 +2873,10 @@ var PROPUSTEK_TZ = '';
 var DOPLNKY_SO = [];
 
 // NN NADZEMNÍ VEDENÍ - křížení s osou silnice (značka ⚡, popup "NN nadzemní")
-// Slapy-Tábor: zatím nezadáno (data byla pozůstatek ze Sulic – vyčištěno). Doplní se z PDPS až budou známa.
+// Slapy-Tábor: zatím nezadáno (dřív pozůstatek z jiné stavby – vyčištěno). Doplní se z PDPS až budou známa.
 var VEDENI_NN = [];
 
-// PRACOVNÍ ŘEZY - PDPS Sulice je nemá, prázdná lookup mapa
+// PRACOVNÍ ŘEZY - PDPS je zatím nemá, prázdná lookup mapa
 var DOCS_PR = {};
 function findPR(realKm) { return null; }
 
@@ -2948,7 +2982,7 @@ function showToast(msg,dur) {
 // ── MAPA ──────────────────────────────
 function initMap() {
   map=L.map('map',{
-    center:(typeof GPX_POINTS!=='undefined'&&GPX_POINTS.length?GPX_POINTS[Math.floor(GPX_POINTS.length/2)].slice(0,2):[49.3956,14.659]), // střed trasy TÉTO stavby (dřív natvrdo Sulice)
+    center:(typeof GPX_POINTS!=='undefined'&&GPX_POINTS.length?GPX_POINTS[Math.floor(GPX_POINTS.length/2)].slice(0,2):[49.3956,14.659]), // střed trasy TÉTO stavby (data-driven; NIKDY natvrdo souřadnice jiné stavby)
     zoom:14,
     maxZoom:23,
     zoomControl:true,
@@ -3843,7 +3877,7 @@ function renderDocPage(realKm) {
   nosit.style.display = 'none';
   currentPdfSrc = p.soubor;
 
-  // VŽDY iframe (jako Votice). V Safari iOS dostane nativní PDF viewer
+  // VŽDY iframe. V Safari iOS dostane nativní PDF viewer
   // s toolbarem a pinch-zoom. V PWA módu iframe zobrazí PDF základně, plnou
   // lupu uživatel dostane přes ↗ (otevře v Safari).
   var canvasWrap = document.getElementById('pdf-canvas-wrap');
@@ -4074,7 +4108,7 @@ function centerGPS() {
 
 function resetMapView() {
   if(!map) return;
-  // „Domů" = zpět na celou trasu této stavby (dřív pevné souřadnice Sulic – chyba)
+  // „Domů" = zpět na celou trasu TÉTO stavby (data-driven; NIKDY pevné souřadnice jiné stavby)
   try {
     if(typeof GPX_POINTS!=='undefined' && GPX_POINTS && GPX_POINTS.length){
       map.fitBounds(L.latLngBounds(GPX_POINTS.map(function(p){return[p[0],p[1]];})),{padding:[40,40]});
@@ -4193,7 +4227,7 @@ function init() {
   buildStaniceni100Sub();
   buildStaniceni20();
   buildStaniceni20Sub();
-  // buildPR vyžaduje DOCS_PR (pracovní řezy) - PDPS Sulice je nemá
+  // buildPR vyžaduje DOCS_PR (pracovní řezy) - PDPS je zatím nemá
   if(Object.keys(DOCS_PR).length) buildPR();
   if(SANACE.length) buildSanace();
   buildSO();
@@ -4229,7 +4263,7 @@ function init() {
     el.addEventListener('touchend',   function(e){ e.stopPropagation(); }, {passive:false});
     el.addEventListener('wheel',      function(e){ e.stopPropagation(); }, {passive:false});
   });
-  showToast('II/137 Slapy – Tábor ✓',3000);
+  showToast(STAVBA.nazev+' ✓',3000);
 }
 
 
@@ -6476,7 +6510,7 @@ document.addEventListener('keydown', function(e){
 // ══════════════════════════════════════════════════════════════════
 // 🕳️ SONDY z diagnostiky vozovky (ESLAB, zpráva č. P36-2019, 2019)
 // Statická data (19 sond). „km" v PDF = průběžné staničení celé silnice
-// II/603; staničení TÉTO stavby se počítá z GPS přes gpsToKm (osa+kalibrace).
+// staničení TÉTO stavby se počítá z GPS přes gpsToKm (osa+kalibrace).
 // Poloha 4 sond (o:1) je odhad interpolací z km (v PDF chybí/špatná GPS).
 // v = tloušťky vrstev shora dolů [mm], horní = asfaltové souvrství (AC).
 // ══════════════════════════════════════════════════════════════════
@@ -7586,7 +7620,7 @@ function photoCreationDate(item) {
 
 function pad2(n){ return (n<10?'0':'')+n; }
 
-// Souborové jméno: sulice_2026-05-12_1423_km1+540_Ondrej.jpg
+// Souborové jméno: <STAVBA_SLUG>_2026-05-12_1423_km1+540_Ondrej.jpg
 // ASCII slug (diakritika → ASCII, pryč mezery/nepovolené znaky) pro název souboru.
 var _DIAKR = {'á':'a','Á':'A','č':'c','Č':'C','ď':'d','Ď':'D','é':'e','É':'E','ě':'e','Ě':'E','í':'i','Í':'I','ľ':'l','ň':'n','Ň':'N','ó':'o','Ó':'O','ř':'r','Ř':'R','š':'s','Š':'S','ť':'t','Ť':'T','ú':'u','Ú':'U','ů':'u','Ů':'U','ý':'y','Ý':'Y','ž':'z','Ž':'Z'};
 function _asciiSlug(s){
@@ -7611,7 +7645,7 @@ function _photoSoForName(item){
 function photoFilename(item, idx, fields) {
   fields = fields || { so:true, km:true, datum:true, jmeno:true };
   var d = photoCreationDate(item);
-  var parts = ['stavba'];
+  var parts = [STAVBA_SLUG];
   if(fields.so){ var so = _photoSoForName(item); if(so) parts.push(so); }
   var wantCas = (fields.cas !== false);   // čas v názvu (default ano, pokud není výslovně vypnutý)
   if(fields.datum || wantCas){
@@ -8049,7 +8083,7 @@ function _doShareSelectedGalleryPhotos(applyStamp) {
     } catch(e) { canShareFiles = false; }
 
     if(canShareFiles) {
-      var title = files.length === 1 ? 'Fotka ze stavby' : ('Slapy–Tábor – ' + files.length + ' fotek');
+      var title = files.length === 1 ? 'Fotka ze stavby' : (STAVBA.nazevKratky+' – ' + files.length + ' fotek');
       navigator.share({ files: files, title: title })
         .then(function(){
           showToast('✅ Otevřeno sdílení (' + files.length + ' ks). Ťukni „Uložit obrázky".', 3000);
@@ -8103,7 +8137,7 @@ function _doZipSelectedGalleryPhotos(applyStamp) {
     zip.generateAsync({ type:'blob', compression:'STORE' }).then(function(blob){
       hideSync();
       var d = new Date();
-      var fname = 'stavba_fotky_' + d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate())
+      var fname = STAVBA_SLUG + '_fotky_' + d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate())
                 + '_' + pad2(d.getHours()) + pad2(d.getMinutes()) + '_' + files.length + 'ks.zip';
       triggerBlobDownload(blob, fname);
       if(res.failed) showToast('⚠ ZIP stažen (' + files.length + '/' + res.total + ', ' + res.failed + ' selhalo)', 3500);
@@ -8661,12 +8695,12 @@ function disableMapForPdf(disable) {
 
 
 // ═══════════════════════════════════
-//  SANACE PODLOŽÍ - PDPS Sulice nemá specifické úseky sanace, prázdné
+//  SANACE PODLOŽÍ - zatím bez specifických úseků, prázdné
 // ═══════════════════════════════════
 var SANACE = [];
 
 // ═══════════════════════════════════
-//  STAVEBNÍ OBJEKTY SO 101 - SO 107 (Sulice - Želivec)
+//  STAVEBNÍ OBJEKTY (liniové úseky) – viz STAVEBNI_OBJEKTY výše
 // ═══════════════════════════════════
 var STAVEBNI_OBJEKTY = [
   {id:'SO 153', kmOd:1.137, kmDo:1.562, barva:'#e67e22', nazev:'Přeložka polní cesty (km 1,137–1,562)',
@@ -9381,7 +9415,7 @@ function renderObjektPage(idx) {
   // Aktualizuj titulek a label
   var title = document.getElementById('objekt-title');
   if(title) title.textContent = p.nazev || p.typ || 'Stavební objekt';
-  // VŽDY iframe (jako Votice). Pro pinch-zoom otevři v Safari přes ↗.
+  // VŽDY iframe. Pro pinch-zoom otevři v Safari přes ↗.
   var canvasWrap = document.getElementById('objekt-canvas-wrap');
   var propZoomIn  = document.getElementById('btn-objekt-zoom-in');
   var propZoomOut = document.getElementById('btn-objekt-zoom-out');
@@ -9750,7 +9784,7 @@ var gallerySort = 'date';     // 'date' = datum pořízení (nejnovější prvn�
 // bodové doplňkové objekty (DOPLNKY_SO) mají jedno km. Při focení se podle staničení
 // najdou objekty v okolí ±50 m a uživatel vybere přesný SO.
 // Naplní se automaticky z SO_CATALOG + BODOVE_SO + DOPLNKY_SO (viz _buildSoObjekty() za SO_CATALOG).
-// (Dřív tu byl natvrdo katalog Sulic SO 101–107 – pozůstatek, odstraněn.)
+// (Dřív tu byl natvrdo katalog jiné stavby SO 101–107 – pozůstatek, odstraněn.)
 var SO_OBJEKTY = [];
 
 // KOMPLETNÍ katalog SO objektů z PD (legenda situace) – pro tlačítko „Další SO ze seznamu".
@@ -10193,7 +10227,7 @@ function _photoIDBOpen(){
   return new Promise(function(res){
     if(_photoIDB) return res(_photoIDB);
     try{
-      var rq = indexedDB.open('sulicePhotos', 1);
+      var rq = indexedDB.open(STAVBA_SLUG + '-photos', 1);
       rq.onupgradeneeded = function(e){ var db=e.target.result; if(!db.objectStoreNames.contains('pending')) db.createObjectStore('pending',{keyPath:'t'}); };
       rq.onsuccess = function(e){ _photoIDB=e.target.result; res(_photoIDB); };
       rq.onerror = function(){ res(null); };
@@ -10221,10 +10255,10 @@ function enqueuePhoto(compressed, meta, yes){
   if(!photoUploading) _processPhotoQueue();
 }
 // SUB režim: fotka jde přes Cloud Function (SUB nemá Firebase přihlášení). Značí se zdroj:'SUB'.
-var UPLOAD_SUB_FN_URL = 'https://europe-west1-tabor-slapy.cloudfunctions.net/uploadSubFoto';
-var LIST_SUB_FN_URL   = 'https://europe-west1-tabor-slapy.cloudfunctions.net/listSubFotos';
-var TAG_FN_URL        = 'https://europe-west1-tabor-slapy.cloudfunctions.net/tagFoto';
-var DENIK_FN_URL      = 'https://europe-west1-tabor-slapy.cloudfunctions.net/denikVytah';
+var UPLOAD_SUB_FN_URL = _CF_BASE + 'uploadSubFoto';
+var LIST_SUB_FN_URL = _CF_BASE + 'listSubFotos';
+var TAG_FN_URL = _CF_BASE + 'tagFoto';
+var DENIK_FN_URL = _CF_BASE + 'denikVytah';
 // #8 – sestaví textový přehled dne pro AI výtah
 function _denikAssembleText(){
   var d = window.diaryCurrentData || {}, dt = window.diaryCurrentDate || '', lines = [];
@@ -11302,7 +11336,7 @@ window._quickPhotoDone = false;   // URL ?foto/#foto → foťák (jednou za náv
 // Doplň sem uid koordinátora/koordinátorů (admin smí mazat cokoliv).
 // uid najdeš po přihlášení v konzoli: window.currentUser.uid, nebo ve
 // Firebase v /uzivatele. Prázdné pole = admina nemá nikdo.
-var ADMIN_UIDS = [ 'PNu1CsaP2cUwmB9NNjUE8ILg89f2' ]; // arasid33@gmail.com (koordinátor) – UID v projektu tabor-slapy
+var ADMIN_UIDS = STAVBA.adminUids; // koordinátor – viz STAVBA.adminUids (UID per-projekt!)
 // Vrací true, když aktuální uživatel smí smazat záznam daného vlastníka:
 //  - vlastník (shodné uid) smí,
 //  - admin (v ADMIN_UIDS) smí cokoliv,
@@ -12165,7 +12199,7 @@ function printBlok(id){
     '<h1>'+esc(title)+'</h1>'+
     '<div class="meta">'+(n.verejne?'🌐 Veřejná':'🔒 Soukromá')+' · '+esc(n.author||'')+' · '+esc(when)+'</div>'+
     '<div class="txt">'+esc(n.text||'')+'</div>'+
-    '<div class="foot">II/137 Slapy–Tábor · Poznámkový blok</div></body></html>';
+    '<div class="foot">'+STAVBA.nazev+' · Poznámkový blok</div></body></html>';
   if(w && !w.closed){ w.document.open(); w.document.write(html); w.document.close(); }
   else { try{ var b=new Blob([html],{type:'text/html'}); window.open(URL.createObjectURL(b),'_blank'); }catch(e){ showToast('Povol vyskakovací okna pro PDF', 3000); } }
 }
@@ -13195,7 +13229,7 @@ function _subOpenPreview(url, ts){
 function _subDownload(url, ts){
   showToast('⏳ Stahuji…', 1500);
   fetch(url).then(function(r){ return r.blob(); }).then(function(blob){
-    triggerBlobDownload(blob, 'sulice_sub_' + (ts||Date.now()) + '.jpg');
+    triggerBlobDownload(blob, STAVBA_SLUG + '_sub_' + (ts||Date.now()) + '.jpg');
   }).catch(function(){ showToast('❌ Stažení selhalo', 2500); });
 }
 
@@ -17432,7 +17466,7 @@ function generateFullExport(){
     return;
   }
   var out = [];
-  out.push('STAVEBNÍ DENÍK — II/137 Slapy – Tábor');
+  out.push('STAVEBNÍ DENÍK — '+STAVBA.nazev);
   out.push('Rozsah: ' + od + ' – ' + doDate);
   out.push('Vygenerováno: ' + new Date().toLocaleString('cs-CZ'));
   out.push('═══════════════════════════════════════════');
@@ -17607,7 +17641,7 @@ function _buildDiaryPdfHtml(keys, od, doDate, inc, urlMap, photoByDay){
     + '@media print{.day{page-break-inside:avoid;} @page{margin:14mm;}}';
   var P = [];
   P.push('<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Stavební deník '+esc(od)+(od!==doDate?(' – '+esc(doDate)):'')+'</title><style>'+css+'</style></head><body>');
-  P.push('<h1>Stavební deník — II/137 Slapy – Tábor</h1><div class="sub">Rozsah: '+esc(od)+' – '+esc(doDate)+' · vygenerováno '+esc(new Date().toLocaleString('cs-CZ'))+'</div>');
+  P.push('<h1>Stavební deník — '+STAVBA.nazev+'</h1><div class="sub">Rozsah: '+esc(od)+' – '+esc(doDate)+' · vygenerováno '+esc(new Date().toLocaleString('cs-CZ'))+'</div>');
   if(!keys.length) P.push('<p>V daném rozsahu nejsou žádné zápisy.</p>');
   keys.forEach(function(dt){
     var d=window.diaryAllDays[dt]||{}; var dObj=ymd_to_date(dt);
@@ -17715,7 +17749,7 @@ function generateSichtovkaExport(){
   });
 
   var out = [];
-  out.push('ŠICHTOVKA — II/137 Slapy – Tábor');
+  out.push('ŠICHTOVKA — '+STAVBA.nazev);
   out.push('Rozsah: ' + od + ' – ' + doDate);
   out.push('Vygenerováno: ' + new Date().toLocaleString('cs-CZ'));
   out.push('Podklad pro kontrolu fakturace');
@@ -18482,7 +18516,7 @@ async function downloadTeprWithSigs(){
 
     page.drawText(T('Prohlášení zaměstnance'), { x: 40, y: y, size: 18, font: helvB });
     y -= 30;
-    page.drawText(T('Stavba: II/137 Slapy – Tábor, rekonstrukce silnice a mostů'), { x: 40, y: y, size: 11, font: helv });
+    page.drawText(T('Stavba: '+STAVBA.nazev+', rekonstrukce silnice a mostů'), { x: 40, y: y, size: 11, font: helv });
     y -= 15;
     page.drawText(T('TePř: ' + (k.so || '') + ' — ' + (k.nazev || '')), { x: 40, y: y, size: 11, font: helv });
     y -= 22;
@@ -19047,7 +19081,7 @@ function generateStrojeExport(){
   });
 
   var out = [];
-  out.push('STROJE — II/137 Slapy – Tábor');
+  out.push('STROJE — '+STAVBA.nazev);
   out.push('Rozsah: ' + od + ' – ' + doDate);
   if(soFilter) out.push('Filtr SO: ' + soFilter);
   out.push('Vygenerováno: ' + new Date().toLocaleString('cs-CZ'));
