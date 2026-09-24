@@ -408,7 +408,7 @@ textarea.note-field { min-height:80px; resize:vertical; }
 .note-edit-btn { flex:1; background:#1565c0; color:#fff; border:none; border-radius:8px; padding:9px; font-size:13px; font-weight:700; cursor:pointer; }
 
 /* Fullscreen foto */
-#photo-fs { position:fixed; inset:0; background:rgba(0,0,0,.95); z-index:5000; display:none; flex-direction:column; align-items:stretch; justify-content:flex-start; cursor:zoom-out; }
+#photo-fs { position:fixed; inset:0; background:rgba(0,0,0,.95); z-index:5000; display:none; flex-direction:column; align-items:stretch; justify-content:flex-start; cursor:zoom-out; padding-bottom:calc(76px + env(safe-area-inset-bottom)); box-sizing:border-box; }
 /* 360° navigace: svislé šipky VYCENTROVANÉ NA STŘED (nahoru=vpřed po silnici, dolů=zpět).
    Boční šipky vlevo/vpravo ani in-image hotspoty NE – u 360° matou (mozek nebere „vpravo=dopředu").
    Rychlé (dvojšipka ⏫/⏬ ±4) na krajích obrazovky, pomalé (▲/▼ ±1) blíž středu. */
@@ -423,7 +423,7 @@ textarea.note-field { min-height:80px; resize:vertical; }
 @media (max-width:420px){ #pano-minimap{ width:118px; height:118px; } }
 #photo-fs.open { display:flex; }
 #photo-fs-stage { flex:1 1 auto; min-height:0; width:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-#photo-fs #photo-fs-img { max-width:100%; max-height:100%; object-fit:contain; }
+#photo-fs #photo-fs-img { flex:1 1 auto; min-height:0; max-width:100%; max-height:100%; object-fit:contain; }
 
 /* Sync indikátor */
 #sync-indicator {
@@ -9491,7 +9491,9 @@ function openPropPdfExternal() {
     if(panel) panel.classList.add('fullscreen');
     return;
   }
-  window.open(currentObjektSrc,'_blank');
+  // Otevři okno HNED v gestu (bez popup-blocku), URL doplň po resolve (soukromé soubory = Storage token URL).
+  var w = window.open('', '_blank');
+  resolveFileUrl(currentObjektSrc).then(function(u){ if(w) w.location.href = u; else window.open(u, '_blank'); });
 }
 
 
@@ -19555,7 +19557,7 @@ function copyDiaryExport(){
     <div id="objekt-title">Stavební objekt</div>
     <button id="btn-objekt-zoom-out" onclick="pdfZoom(-1)" title="Zmenšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">−</button>
     <button id="btn-objekt-zoom-in"  onclick="pdfZoom(+1)" title="Zvětšit" style="display:none;background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 6px;font-weight:700;">+</button>
-    <button onclick="if(currentObjektSrc)window.open(currentObjektSrc,'_blank')" title="Otevřít v Safari s plnou lupou" style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:4px 6px;">↗</button>
+    <button onclick="openPropPdfExternal()" title="Otevřít v Safari s plnou lupou" style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:4px 6px;">↗</button>
     <button id="btn-objekt-add-vykres" onclick="openVykresUpload(window._propPanelKm, window._propPanelSO)" title="Přidat výkres k tomuto SO" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:0 8px;flex-shrink:0;min-width:44px;min-height:44px;">➕</button>
     <button id="btn-objekt-fs" onclick="togglePropFs()">⛶</button>
     <button id="btn-objekt-close" onclick="closePropPanel()">✕</button>
