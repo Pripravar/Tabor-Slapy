@@ -2025,7 +2025,7 @@ document.addEventListener('touchend', function(e){
 <!-- MODAL: Správa uživatelů (jen admin) -->
 <div id="user-admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3600;align-items:center;justify-content:center;padding:14px;">
   <div style="background:var(--panel);border-radius:14px;max-width:560px;width:100%;max-height:90vh;display:flex;flex-direction:column;border:1px solid var(--border);">
-    <div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <div style="flex:1;font-size:15px;font-weight:700;color:#f5a623;">👥 Správa uživatelů</div>
       <button onclick="openCatPerms()" title="Výchozí práva kategorií" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer;">⚙️ Práva kategorií</button>
       <button onclick="openStats()" title="Statistiky využití" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer;">📊 Statistiky</button>
