@@ -6,7 +6,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 // VERZE cache - při změně příště zvedni, ať si telefony stáhnou novou verzi.
-const CACHE_VERSION = 'tabor-slapy-v14-2026-09-24-propfix-fotoUX';
+const CACHE_VERSION = 'tabor-slapy-v16-2026-11-04-importKomentar';
 
 const CORE_ASSETS = [
   './',

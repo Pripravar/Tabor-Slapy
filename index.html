@@ -2109,6 +2109,9 @@ document.addEventListener('touchend', function(e){
         <label style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--text2);">🏗️ SO objekt
           <input id="lib-bulk-so" type="text" readonly onclick="openSOFieldPicker('lib-bulk-so')" placeholder="klepni a vyber SO (jinak dle km)" autocomplete="off" style="padding:9px;font-size:14px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;">
         </label>
+        <label style="flex:1 1 100%;min-width:140px;display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--text2);">💬 Komentář (nepovinné)
+          <input id="lib-bulk-komentar" type="text" placeholder="komentář k fotkám" style="padding:9px;font-size:14px;border-radius:8px;border:1px solid var(--border);background:var(--panel);color:var(--text);">
+        </label>
         <button onclick="libApplyBulk()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;cursor:pointer;min-height:42px;">Použít u všech</button>
       </div>
     </div>
@@ -6981,6 +6984,36 @@ function compressImage(dataUrl, callback) {
   img.src = dataUrl;
 }
 
+// Paměťově úsporné zpracování fotky PŘÍMO ze souboru (File/Blob) → zmenšená JPEG dataURL.
+// Proč: readAsDataURL u fotek z Android foťáku (12–108 Mpx) vytvoří obří base64 řetězec a `new Image`
+// z něj dekóduje plnou bitmapu (stovky MB) → špička paměti → WebView appku zabije (pády ~3/10 na Androidu).
+// createImageBitmap dekóduje efektivněji a `close()` paměť hned uvolní; fallback přes objectURL (bez base64).
+function compressFileToDataUrl(file, callback){
+  var MAX = 1600;
+  function draw(src, w, h){
+    if(w > MAX || h > MAX){ if(w > h){ h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+    var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    try { canvas.getContext('2d').drawImage(src, 0, 0, w, h); } catch(e){ canvas.width=canvas.height=0; callback(null); return; }
+    var out = canvas.toDataURL('image/jpeg', 0.88);
+    canvas.width = canvas.height = 0;
+    callback(out);
+  }
+  function viaObjectUrl(){
+    try {
+      var url = URL.createObjectURL(file); var img = new Image();
+      img.onload = function(){ var w=img.naturalWidth||img.width, h=img.naturalHeight||img.height; draw(img, w, h); try{ URL.revokeObjectURL(url); }catch(e){} img.src=''; };
+      img.onerror = function(){ try{ URL.revokeObjectURL(url); }catch(e){} callback(null); };
+      img.src = url;
+    } catch(e){ callback(null); }
+  }
+  if(window.createImageBitmap){
+    try {
+      createImageBitmap(file).then(function(bmp){ draw(bmp, bmp.width, bmp.height); try{ bmp.close(); }catch(e){} })
+                             .catch(function(){ viaObjectUrl(); });
+    } catch(e){ viaObjectUrl(); }
+  } else { viaObjectUrl(); }
+}
+
 function renderNewPhotoPreviews() {
   var el = document.getElementById('note-photos-preview');
   el.innerHTML = '';
@@ -10481,9 +10514,10 @@ function _processStandalonePhotoFile(file){
   var km = null;
   try { km = fmtKm(gpxCumToRealKm(nearestOnRoute(latlng.lat, latlng.lng).cum)); } catch(ex){}
   var author = (window.currentUser && window.currentUser.name) || localStorage.getItem('noteAuthor') || '';
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    compressImage(ev.target.result, function(compressed) {
+  // Paměťově úsporné zpracování přímo ze souboru (ne readAsDataURL) → méně pádů na Androidu u velkých fotek.
+  compressFileToDataUrl(file, function(compressed) {
+    if(!compressed){ showToast('❌ Fotku se nepodařilo zpracovat – zkus to znovu nebo nižší rozlišení foťáku', 3800); return; }
+    {
       window.photoSession.pendingPhoto = compressed;
       window.photoSession.pendingMeta  = {km: km, author: author, lat: latlng.lat, lng: latlng.lng};
       window.photoSession.phase = 'stamp';
@@ -10503,9 +10537,8 @@ function _processStandalonePhotoFile(file){
         showToast('🗑️ Fotka zahozena', 1500);
         _showContinuePrompt();
       });
-    });
-  };
-  reader.readAsDataURL(file);
+    }
+  });
 }
 window.addEventListener('load', function() {
   var inp = document.getElementById('standalone-photo-input');
@@ -10565,7 +10598,7 @@ window.addEventListener('load', function(){
         var gps = exifGpsFromDataUrl(dataUrl);
         var km='', lat=null, lng=null;
         if(gps && !isNaN(gps.lat)){ lat=gps.lat; lng=gps.lng; km=libKmFromLatLng(gps.lat,gps.lng); }
-        libImportItems[idx] = { dataUrl:dataUrl, date:(libExifDate(dataUrl)||libTodayYmd()), km:km, lat:lat, lng:lng, name:file.name };
+        libImportItems[idx] = { dataUrl:dataUrl, date:(libExifDate(dataUrl)||libTodayYmd()), km:km, lat:lat, lng:lng, name:file.name, komentar:'' };
         if(--pending===0){ libImportItems = libImportItems.filter(Boolean); showLibImportModal(); }
       };
       reader.onerror = function(){ if(--pending===0){ libImportItems = libImportItems.filter(Boolean); showLibImportModal(); } };
@@ -10586,7 +10619,7 @@ function showLibImportModal(){
   if(!libImportItems.length){ showToast('Nevybral jsi žádnou fotku', 2500); return; }
   document.getElementById('lib-bulk-date').value = libTodayYmd();
   document.getElementById('lib-bulk-km').value = '';
-  var lbso=document.getElementById('lib-bulk-so'); if(lbso) lbso.value=''; _fillSoCatalogList();
+  var lbso=document.getElementById('lib-bulk-so'); if(lbso) lbso.value=''; var lbk=document.getElementById('lib-bulk-komentar'); if(lbk) lbk.value=''; _fillSoCatalogList();
   document.getElementById('lib-import-status').textContent = '';
   var btn = document.getElementById('lib-import-submit'); btn.disabled=false; btn.style.opacity='1';
   btn.textContent = 'Nahrát '+libImportItems.length+' do galerie';
@@ -10598,6 +10631,7 @@ function libApplyBulk(){
   var d = document.getElementById('lib-bulk-date').value;
   var kmRaw = document.getElementById('lib-bulk-km').value.trim();
   var soRaw = (document.getElementById('lib-bulk-so') ? document.getElementById('lib-bulk-so').value : '').trim();
+  var kmtRaw = (document.getElementById('lib-bulk-komentar') ? document.getElementById('lib-bulk-komentar').value : '').trim();
   var rk = kmRaw ? libParseKm(kmRaw) : null;
   libImportItems.forEach(function(it){
     if(d) it.date = d;
@@ -10606,6 +10640,7 @@ function libApplyBulk(){
       else { it.km = kmRaw; it.lat=null; it.lng=null; }   // volný text = rychlá poznámka (ZS, …)
     }
     if(soRaw) it.so = soRaw;
+    if(kmtRaw) it.komentar = kmtRaw;
   });
   renderLibImportList();
   showToast('Vyplněno u všech', 1500);
@@ -10637,7 +10672,10 @@ function renderLibImportList(){
     soInp.style.cssText = 'flex:1;min-width:95px;padding:7px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;';
     soInp.onclick = (function(id){ return function(){ openSOFieldPicker(id); }; })(soInp.id);
     soInp.onchange = (function(idx){ return function(e){ libImportItems[idx].so = e.target.value.trim(); }; })(i);
-    fields.appendChild(dInp); fields.appendChild(kInp); fields.appendChild(soInp); row.appendChild(fields);
+    var cInp = document.createElement('input'); cInp.type='text'; cInp.placeholder='💬 komentář (nepovinné)'; cInp.value=it.komentar||'';
+    cInp.style.cssText='flex:1 1 100%;min-width:140px;padding:7px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);';
+    cInp.onchange = (function(idx){ return function(e){ libImportItems[idx].komentar = (e.target.value||'').trim(); }; })(i);
+    fields.appendChild(dInp); fields.appendChild(kInp); fields.appendChild(soInp); fields.appendChild(cInp); row.appendChild(fields);
     var rm = document.createElement('button'); rm.textContent='✕'; rm.title='Odebrat z výběru';
     rm.style.cssText = 'background:none;border:none;color:#e57373;font-size:16px;cursor:pointer;min-width:34px;min-height:34px;';
     rm.onclick = (function(idx){ return function(){ libImportItems.splice(idx,1); if(!libImportItems.length){ closeLibraryImport(); return; } renderLibImportList(); var b=document.getElementById('lib-import-submit'); b.textContent='Nahrát '+libImportItems.length+' do galerie'; }; })(i);
@@ -10692,6 +10730,11 @@ function submitLibImport(){
               if(urlS) entry.urlStamped  = urlS;
               if(it.lat!=null){ entry.lat = it.lat; entry.lng = it.lng; }
               if(isSubOnly()){ entry.zdroj = 'SUB'; entry.sub = true; }   // subka → fotka označená SUB
+              // Komentář zadaný při importu → ulož rovnou jako komentář fotky (zobrazí se v galerii i fullscreenu, jde editovat).
+              if(it.komentar && String(it.komentar).trim()){
+                var _kc='c_'+t+'_'+Math.random().toString(36).substr(2,4);
+                entry.komentare={}; entry.komentare[_kc]={ text:String(it.komentar).trim(), author:author, uid:(window.currentUser?window.currentUser.uid:''), ts:entry.ts };
+              }
               function saveImp(){ db.ref('standalone_photos/'+t).set(entry).then(function(){ _tagPhoto(t); done++; processOne(idx+1); }).catch(function(){ fail++; processOne(idx+1); }); }
               resizeImageMax(stamped, 400, 0.5, function(thumbUrl){
                 if(!thumbUrl){ saveImp(); return; }
