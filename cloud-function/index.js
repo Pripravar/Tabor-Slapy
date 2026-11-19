@@ -145,3 +145,45 @@ exports.sendTaskNotifications = functions
 
     return snap.ref.remove();
   });
+
+
+/* ════════════════════════════════════════════════════════════════
+   NOVÝ UŽIVATEL ČEKÁ NA SCHVÁLENÍ → push všem adminům (2026-11-19)
+   Klient při 1. přihlášení zapíše /uzivatele/{uid} (approved chybí) → onCreate.
+   Admin = role 'admin' v /uzivatele NEBO UID v ADMIN_UIDS_CF (stejné jako ADMIN_UIDS v index.html).
+   Klik na oznámení otevře Správu uživatelů (#schvaleni).
+   ════════════════════════════════════════════════════════════════ */
+const ADMIN_UIDS_CF = [ 'PNu1CsaP2cUwmB9NNjUE8ILg89f2' ];   // ← při nové stavbě doplň UID koordinátora (jako ADMIN_UIDS v index.html)
+exports.notifyNewUser = functions
+  .region('europe-west1')
+  .database
+  .ref('/uzivatele/{uid}')
+  .onCreate(async (snap, context) => {
+    const u = snap.val() || {};
+    const newUid = context.params.uid;
+    if(u.approved === true || u.role === 'admin' || ADMIN_UIDS_CF.indexOf(newUid) !== -1) return null;
+    const usersSnap = await db.ref('/uzivatele').once('value');
+    const users = usersSnap.val() || {};
+    const rawTokens = [];
+    Object.keys(users).forEach(uid => {
+      const a = users[uid];
+      if(!a || uid === newUid || a.blocked === true) return;
+      if(a.role !== 'admin' && ADMIN_UIDS_CF.indexOf(uid) === -1) return;
+      if(a.fcmToken) rawTokens.push(a.fcmToken);
+      if(a.fcmTokens) Object.keys(a.fcmTokens).forEach(k => { if(a.fcmTokens[k]) rawTokens.push(a.fcmTokens[k]); });
+    });
+    const tokens = [...new Set(rawTokens)];
+    if(!tokens.length){ console.log('notifyNewUser: žádný admin s tokenem'); return null; }
+    const kdo = u.name || u.email || u.phone || 'Nový uživatel';
+    const kontakt = [u.email, u.phone].filter(Boolean).join(' · ');
+    const message = {
+      notification: { title: '👤 Nový uživatel čeká na schválení', body: kdo + (kontakt && kontakt !== kdo ? (' (' + kontakt + ')') : '') + ' – schval ho ve Správě uživatelů (Slapy – Tábor).' },
+      data: { typ: 'schvaleni', uid: newUid },
+      tokens: tokens
+    };
+    try {
+      const resp = await admin.messaging().sendEachForMulticast(message);
+      console.log('notifyNewUser FCM:', resp.successCount, '/', tokens.length);
+    } catch(e) { console.error('notifyNewUser chyba:', e); }
+    return null;
+  });

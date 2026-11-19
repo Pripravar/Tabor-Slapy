@@ -2107,6 +2107,11 @@ document.addEventListener('touchend', function(e){
       <button onclick="closeLibraryImport()" style="background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;min-width:44px;min-height:44px;">✕</button>
     </div>
     <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:var(--panel2);">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px;">
+        <input type="checkbox" id="lib-exif-toggle" checked onchange="libToggleExif(this.checked)" style="width:20px;height:20px;flex-shrink:0;">
+        <span style="font-size:14px;font-weight:700;color:var(--text);">📍 Staničení z GPS fotky <span style="font-weight:400;color:var(--text2);font-size:12px;">(+ datum pořízení)</span></span>
+      </label>
+      <div id="lib-exif-info" style="font-size:12px;color:var(--text2);margin:0 0 10px 28px;"></div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Společně pro všechny (z EXIF předvyplním, kde to jde):</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
         <label style="flex:1;min-width:120px;display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--text2);">Datum
@@ -10928,9 +10933,9 @@ window.addEventListener('load', function(){
       reader.onload = function(ev){
         var dataUrl = String(ev.target.result);
         var gps = exifGpsFromDataUrl(dataUrl);
-        var km='', lat=null, lng=null;
-        if(gps && !isNaN(gps.lat)){ lat=gps.lat; lng=gps.lng; km=libKmFromLatLng(gps.lat,gps.lng); }
-        libImportItems[idx] = { dataUrl:dataUrl, date:(libExifDate(dataUrl)||libTodayYmd()), km:km, lat:lat, lng:lng, name:file.name, komentar:'' };
+        // GPS + datum z EXIF se aplikují až podle přepínače (_libApplyExif v showLibImportModal)
+        libImportItems[idx] = { dataUrl:dataUrl, date:libTodayYmd(), km:'', lat:null, lng:null, name:file.name, komentar:'',
+          exifGps:((gps && !isNaN(gps.lat)) ? gps : null), exifDate:(libExifDate(dataUrl)||'') };
         if(--pending===0){ libImportItems = libImportItems.filter(Boolean); showLibImportModal(); }
       };
       reader.onerror = function(){ if(--pending===0){ libImportItems = libImportItems.filter(Boolean); showLibImportModal(); } };
@@ -10947,6 +10952,40 @@ function _fillSoCatalogList(){
   });
   dl.innerHTML = opts.join('');
 }
+// ── Přepínač „📍 Staničení z GPS fotky" (2026-11-19, jako Martinovice) ──
+// Zapnuto: z GPS fotky km (jen když je fotka do 400 m od trasy, jinak „mimo stavbu") + datum pořízení.
+// Vypnuto: vrátí jen to, co se z fotky vyplnilo; ruční úpravy zůstanou. Volba se pamatuje (localStorage).
+function _libExifOn(){ try{ return localStorage.getItem('libUseExif')!=='0'; }catch(e){ return true; } }
+function libToggleExif(on){
+  try{ localStorage.setItem('libUseExif', on?'1':'0'); }catch(e){}
+  _libApplyExif(on); renderLibImportList();
+}
+function _libGpsKm(la, lo){
+  var nr=null; try{ nr=nearestOnRoute(la,lo); }catch(e){}
+  if(!nr || !(nr.dist<=400)) return '';
+  try{ return fmtKm(gpxCumToRealKm(nr.cum)); }catch(e){ return ''; }
+}
+function _libApplyExif(on){
+  var items=libImportItems||[], nOut=0;
+  items.forEach(function(it){
+    if(on){
+      if(it.exifDate && !it._dateManual){ it.date=it.exifDate; it._fromExifDate=true; }
+      if(it.exifGps && !it._kmManual){
+        it.lat=it.exifGps.lat; it.lng=it.exifGps.lng; it._fromGps=true;
+        it.km=_libGpsKm(it.lat, it.lng); it._gpsInfo = it.km ? '' : 'mimo stavbu'; if(!it.km) nOut++;
+      }
+    } else {
+      if(it._fromExifDate && !it._dateManual){ it.date=libTodayYmd(); it._fromExifDate=false; }
+      if(it._fromGps && !it._kmManual){ it.km=''; it.lat=null; it.lng=null; it._fromGps=false; it._gpsInfo=''; }
+    }
+  });
+  var st=document.getElementById('lib-exif-info');
+  if(st){
+    var withGps=items.filter(function(it){ return it.exifGps; }).length;
+    st.textContent = !on ? 'Vypnuto – staničení zadej ručně.' :
+      (withGps ? ('📍 GPS má '+withGps+' z '+items.length+' fotek'+(nOut?(' ('+nOut+' mimo stavbu – doplň ručně)'):'')+'.') : '⚠️ Žádná fotka nemá GPS – zadej km ručně (telefon polohu nezapsal nebo ji při výběru odstranil).');
+  }
+}
 function showLibImportModal(){
   if(!libImportItems.length){ showToast('Nevybral jsi žádnou fotku', 2500); return; }
   document.getElementById('lib-bulk-date').value = libTodayYmd();
@@ -10955,6 +10994,8 @@ function showLibImportModal(){
   document.getElementById('lib-import-status').textContent = '';
   var btn = document.getElementById('lib-import-submit'); btn.disabled=false; btn.style.opacity='1';
   btn.textContent = 'Nahrát '+libImportItems.length+' do galerie';
+  var _xt=document.getElementById('lib-exif-toggle'); if(_xt) _xt.checked=_libExifOn();
+  _libApplyExif(_libExifOn());
   renderLibImportList();
   document.getElementById('lib-import-modal').style.display = 'flex';
 }
@@ -10989,12 +11030,13 @@ function renderLibImportList(){
     var fields = document.createElement('div'); fields.style.cssText = 'flex:1;display:flex;gap:6px;flex-wrap:wrap;';
     var dInp = document.createElement('input'); dInp.type='date'; dInp.value=it.date||'';
     dInp.style.cssText = 'flex:1;min-width:115px;padding:7px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);';
-    dInp.onchange = (function(idx){ return function(e){ libImportItems[idx].date = e.target.value; }; })(i);
+    dInp.onchange = (function(idx){ return function(e){ libImportItems[idx].date = e.target.value; libImportItems[idx]._dateManual = true; }; })(i);
     var kInp = document.createElement('input'); kInp.type='text'; kInp.placeholder='km nebo ZS'; kInp.value=it.km||'';
     kInp.style.cssText = 'flex:1;min-width:95px;padding:7px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);';
     kInp.onchange = (function(idx){ return function(e){
       var raw = e.target.value.trim();
       var rk = raw ? libParseKm(raw) : null;
+      libImportItems[idx]._kmManual = true; libImportItems[idx]._fromGps = false; libImportItems[idx]._gpsInfo = '';
       if(rk!=null){ libImportItems[idx].km = fmtKm(rk); var ll=realKmToLatLng(rk); if(ll){ libImportItems[idx].lat=ll[0]; libImportItems[idx].lng=ll[1]; } }
       else { libImportItems[idx].km = raw; libImportItems[idx].lat=null; libImportItems[idx].lng=null; }  // volný text
       e.target.value = libImportItems[idx].km;
@@ -11007,7 +11049,14 @@ function renderLibImportList(){
     var cInp = document.createElement('input'); cInp.type='text'; cInp.placeholder='💬 komentář (nepovinné)'; cInp.value=it.komentar||'';
     cInp.style.cssText='flex:1 1 100%;min-width:140px;padding:7px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);';
     cInp.onchange = (function(idx){ return function(e){ libImportItems[idx].komentar = (e.target.value||'').trim(); }; })(i);
-    fields.appendChild(dInp); fields.appendChild(kInp); fields.appendChild(soInp); fields.appendChild(cInp); row.appendChild(fields);
+    fields.appendChild(dInp); fields.appendChild(kInp); fields.appendChild(soInp); fields.appendChild(cInp);
+    if(it._fromGps || (!it.exifGps && _libExifOn())){
+      var gTag=document.createElement('div');
+      gTag.style.cssText='flex:1 1 100%;font-size:11px;font-weight:700;color:'+(it._fromGps?(it._gpsInfo?'#f5a623':'#22c55e'):'var(--text2)')+';';
+      gTag.textContent = it._fromGps ? ('📍 z GPS fotky'+(it._gpsInfo?(' – '+it._gpsInfo+', doplň km ručně'):'')) : '📍 fotka nemá GPS – doplň km ručně';
+      fields.appendChild(gTag);
+    }
+    row.appendChild(fields);
     var rm = document.createElement('button'); rm.textContent='✕'; rm.title='Odebrat z výběru';
     rm.style.cssText = 'background:none;border:none;color:#e57373;font-size:16px;cursor:pointer;min-width:34px;min-height:34px;';
     rm.onclick = (function(idx){ return function(){ libImportItems.splice(idx,1); if(!libImportItems.length){ closeLibraryImport(); return; } renderLibImportList(); var b=document.getElementById('lib-import-submit'); b.textContent='Nahrát '+libImportItems.length+' do galerie'; }; })(i);
@@ -13050,6 +13099,22 @@ function saveCatPerms(){
     .catch(function(e){ showToast('❌ '+((e&&e.message)||'chyba'), 3000); });
 }
 
+// Počet zařízení s push upozorněním (FCM token) – přehled „kdo má zapnutá upozornění"
+function _userNotifDevices(u){
+  if(!u) return 0; var t={};
+  if(u.fcmToken) t[u.fcmToken]=1;
+  if(u.fcmTokens) Object.keys(u.fcmTokens).forEach(function(k){ if(u.fcmTokens[k]) t[u.fcmTokens[k]]=1; });
+  return Object.keys(t).length;
+}
+function _notifSummaryHtml(){
+  var d=window.allUsers||{}, keys=Object.keys(d), me=(window.currentUser&&window.currentUser.uid);
+  var nOn=keys.filter(function(k){ return _userNotifDevices(d[k])>0; }).length, meOn=_userNotifDevices(d[me]);
+  return '<div style="font-size:12px;color:var(--text2);padding:2px 2px 10px;">🔔 Upozornění zapnutá: <b style="color:var(--text);">'+nOn+' z '+keys.length+'</b> uživatelů · ty: '+(meOn?('<b style="color:#22c55e;">zapnuto ('+meOn+' zař.)</b>'):'<b style="color:#ef4444;">vypnuto</b>')+'</div>';
+}
+function _notifBadgeHtml(u){
+  var n=_userNotifDevices(u);
+  return '<span title="'+(n?('Upozornění zapnutá na '+n+' zařízení'):'Upozornění nemá zapnutá')+'" style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:4px;'+(n?'background:rgba(34,197,94,.15);color:#22c55e;':'background:var(--panel);color:var(--text2);border:1px solid var(--border);')+'">'+(n?('🔔 '+n):'🔕')+'</span>';
+}
 function _renderUserAdmin(){
   var box = document.getElementById('user-admin-list');
   if(!box) return;
@@ -13095,7 +13160,7 @@ function _renderUserAdmin(){
             (dupN>1?' <span title="Stejné jméno má '+dupN+' účtů – nejspíš přihlášení z víc zařízení přes telefon. Nech ten aktivní, ostatní smaž 🗑" style="background:#f5a623;color:#0f3460;font-size:10px;font-weight:800;padding:1px 6px;border-radius:8px;">⚠️ '+dupN+'× stejné jméno</span>':'')+
           '</div>'+
           '<div style="font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(u.email||u.phone||'')+(loginTyp?(' <span style="opacity:.75;">· '+loginTyp+'</span>'):'')+'</div>'+
-          '<div style="font-size:11px;color:'+(online?'#48bb78':'var(--text2)')+';">'+(online?'● online':('naposledy '+_relTime(u.lastSeen)))+(self?' · to jsi ty':'')+'</div>'+
+          '<div style="font-size:11px;color:'+(online?'#48bb78':'var(--text2)')+';">'+(online?'● online':('naposledy '+_relTime(u.lastSeen)))+(self?' · to jsi ty':'')+_notifBadgeHtml(u)+'</div>'+
         '</div>'+
         // Schválit (jen u čekajících) + blokace (sebe nelze)
         (self?'' :
@@ -13138,7 +13203,7 @@ function _renderUserAdmin(){
         '</label></div>')+
     '</div>';
   });
-  box.innerHTML = html;
+  box.innerHTML = _notifSummaryHtml() + html;
 }
 function toggleUserApprove(uid){
   if(!isAdmin()) return;
@@ -15328,6 +15393,10 @@ function _handleNotifDeepLink(){
       (function go(){ if(window._chatChannels && window._chatChannels[k]){ if(typeof openChatThread==='function') openChatThread(k); clearHash(); } else if(tr++<25){ setTimeout(go,400); } else clearHash(); })();
     } else if(/[#&]chat(\b|$)/.test(h)){
       if(typeof openChatPanel==='function') openChatPanel(); clearHash();
+    } else if(/[#&]schvaleni(\b|$)/.test(h)){
+      // Push „nový uživatel čeká na schválení" → otevři Správu uživatelů (až jsou načtení uživatelé a víme, že jsem admin)
+      var ts=0;
+      (function go(){ if(window.currentUser && window.allUsers && Object.keys(window.allUsers).length && typeof isAdmin==='function' && isAdmin()){ openUserAdmin(); clearHash(); } else if(ts++<30){ setTimeout(go,400); } else clearHash(); })();
     } else if((m=h.match(/[#&]foto=([^&]+)/))){
       var key=decodeURIComponent(m[1]);
       db.ref('standalone_photos/'+key).once('value',function(s){ var it=s.val(); if(it && typeof openPhotoFs==='function'){ it.fbKey=key; openPhotoFs(it.url, key, it); } clearHash(); });
